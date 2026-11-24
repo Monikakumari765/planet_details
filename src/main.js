@@ -35,7 +35,7 @@ import { TerrainManager } from './scene/terrain.js';
 import { Labels } from './ui/labels.js';
 import { HUD, targetInfo } from './ui/hud.js';
 import { SearchUI } from './ui/search.js';
-import { eclToWorldArr, KM_PER_AU, raDecToWorld } from './config.js';
+import { asset, eclToWorldArr, KM_PER_AU, raDecToWorld } from './config.js';
 import { initQuality, makeFpsGuard, QUALITY, IS_MOBILE } from './engine/quality.js';
 import { TouchControls } from './ui/touchControls.js';
 import { t, bodyName, LANG, applyDomI18n } from './ui/i18n.js';
@@ -1984,7 +1984,7 @@ if (!DEV && typeof navigator !== 'undefined' && 'serviceWorker' in navigator
     && (location.protocol === 'https:' || location.hostname === 'localhost'
         || location.hostname === '127.0.0.1')) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch((e) => {
+    navigator.serviceWorker.register(asset('sw.js')).catch((e) => {
       console.info('[sw] EnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglish）', e?.message ?? e);
     });
   });

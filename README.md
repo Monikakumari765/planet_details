@@ -8,6 +8,7 @@ An interactive, browser-based Solar System explorer powered by NASA/JPL ephemeri
 Travel from planetary orbits to the surface, then zoom out to the distant Solar System.
 
 [![Live demo](https://img.shields.io/badge/Live%20demo-sw.icodestar.net-4a9eff?style=for-the-badge)](https://sw.icodestar.net)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-PLANETS--DETAIL-222?style=for-the-badge&logo=github)](https://monikakumari765.github.io/PLANETS-DETAIL/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Three.js](https://img.shields.io/badge/Three.js-0.165-black?style=for-the-badge&logo=three.js)](https://threejs.org)
 

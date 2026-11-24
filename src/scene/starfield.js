@@ -52,6 +52,7 @@ function makeMilkyWayTexture() {
       // EnglishEnglishEnglish fBm → EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish。EnglishEnglishEnglishEnglishEnglishEnglishEnglish
       // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish）。
       // EnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglish/EnglishEnglish/EnglishEnglishEnglish），English"EnglishEnglish"EnglishEnglishEnglishEnglish。
+      // 这里只保留结构；细颗粒由恒星点源提供，避免放大银河贴图时出现像素噪声。
       I = Math.max(0, Math.min(1, I));
       const i4 = (y * W + x) * 4;
       // EnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglish 5000K）

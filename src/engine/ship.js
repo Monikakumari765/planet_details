@@ -657,6 +657,7 @@ export class Ship {
           const C = ax * ax + ay * ay + az * az - minR * minR;
           const disc = B * B - 4 * A * C;
           if (disc >= 0) {
+            // Swept collision checks the whole movement segment to prevent tunneling through a body.
             const t = (-B - Math.sqrt(disc)) / (2 * A);
             if (t >= 0 && t <= 1) {
               // EnglishEnglishEnglish t EnglishEnglishEnglishEnglishEnglish：EnglishEnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglish

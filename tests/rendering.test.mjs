@@ -786,7 +786,7 @@ test('Service Worker 存在且在应用里注册（PWA 清单此前是空壳）'
   assert.ok(/trimCache\(ASSETS, MAX_ASSETS\)/.test(sw), '缺少条目上限——缓存会无界增长');
   assert.ok(/self\.skipWaiting\(\)/.test(sw), '缺少 skipWaiting');
   const main = read('src/main.js');
-  assert.ok(/serviceWorker\.register\('sw\.js'\)/.test(main), '应用未注册 SW');
+  assert.ok(/serviceWorker\.register\((?:'sw\.js'|asset\('sw\.js'\))\)/.test(main), '应用未注册 SW');
   // file:// 打开（教师工具包建议的 U 盘用法）没有 serviceWorker，必须能跳过
   assert.ok(/location\.protocol === 'https:'/.test(main), '注册未做协议判断');
 });
@@ -1219,7 +1219,8 @@ test('无气天体白昼天空仍能看见星星（阿波罗照片里月面天�
 test('高速飞行有扫掠碰撞（否则一帧走几千公里会直接穿过去）', () => {
   const s = read('src/engine/ship.js');
   assert.ok(/_prevPosKm/.test(s), '缺少积分前位置记录');
-  assert.ok(/disc >= 0/.test(s) && /线段-球求交|扫掠碰撞/.test(s), '缺少线段-球求交');
+  assert.ok(/disc >= 0/.test(s) && /line.?segment.?sphere|swept collision|线段-球求交|扫掠碰撞/i.test(s),
+    '缺少线段-球求交');
 });
 
 test('TNO 会自转，且用纯反平方光照（与曝光律一致）', () => {

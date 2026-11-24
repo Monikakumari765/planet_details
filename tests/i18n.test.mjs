@@ -18,5 +18,7 @@ test('English is the default application locale and key UI strings resolve', asy
   }
 
   const html = await readFile(new URL('../index.html', import.meta.url), 'utf8');
-  assert.match(html, /<html lang="en" data-base="\/">/);
+  assert.match(html, /<html lang="en" data-base="\.\/">/);
+  const englishHtml = await readFile(new URL('../en/index.html', import.meta.url), 'utf8');
+  assert.match(englishHtml, /<html lang="en" data-base="\.\.\/">/);
 });
