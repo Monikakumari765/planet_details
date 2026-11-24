@@ -7,8 +7,7 @@
 An interactive, browser-based Solar System explorer powered by NASA/JPL ephemeris data.
 Travel from planetary orbits to the surface, then zoom out to the distant Solar System.
 
-[![Live demo](https://img.shields.io/badge/Live%20demo-sw.icodestar.net-4a9eff?style=for-the-badge)](https://sw.icodestar.net)
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-PLANETS--DETAIL-222?style=for-the-badge&logo=github)](https://monikakumari765.github.io/PLANETS-DETAIL/)
+[![Project repository](https://img.shields.io/badge/GitHub-PLANETS--DETAIL-222?style=for-the-badge&logo=github)](https://github.com/Monikakumari765/PLANETS-DETAIL)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Three.js](https://img.shields.io/badge/Three.js-0.165-black?style=for-the-badge&logo=three.js)](https://threejs.org)
 
@@ -37,7 +36,7 @@ This project is an astronomy visualization and educational experience. It does *
 
 ## Preview
 
-Try the [live demo](https://sw.icodestar.net), or build and run the project locally.
+Browse the [project repository](https://github.com/Monikakumari765/PLANETS-DETAIL), or build and run the project locally.
 
 ## Run locally
 
@@ -75,6 +74,6 @@ To keep this GitHub repository lightweight, large generated or downloaded asset 
 
 ## Credits and license
 
-This repository is based on [Solar Wanderer](https://github.com/hyqzz/Solar-Wanderer), an MIT-licensed project. The upstream copyright and license notices are retained in [LICENSE](LICENSE). Third-party data and asset notices are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+The original MIT license and copyright notices are retained in [LICENSE](LICENSE). Third-party data and asset notices are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 NASA/JPL ephemeris services and public planetary science data are acknowledged by their respective providers. See the notices and source links in the repository for details.
