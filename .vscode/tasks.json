@@ -1,0 +1,115 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Solar Wanderer: dev",
+      "type": "npm",
+      "script": "dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: build",
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: preview",
+      "type": "npm",
+      "script": "preview",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: test",
+      "type": "npm",
+      "script": "test",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: fetch-textures",
+      "type": "npm",
+      "script": "fetch-textures",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: fit-moons",
+      "type": "npm",
+      "script": "fit-moons",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: fetch-small-bodies",
+      "type": "npm",
+      "script": "fetch-small-bodies",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: fetch-vsop87",
+      "type": "npm",
+      "script": "fetch-vsop87",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: fit-tnos",
+      "type": "npm",
+      "script": "fit-tnos",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: fetch-ephemeris",
+      "type": "npm",
+      "script": "fetch-ephemeris",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: verify-release",
+      "type": "npm",
+      "script": "verify-release",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: fetch-dem",
+      "type": "npm",
+      "script": "fetch-dem",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: make-previews",
+      "type": "npm",
+      "script": "make-previews",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: verify",
+      "type": "npm",
+      "script": "verify",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: make-fixtures",
+      "type": "npm",
+      "script": "make-fixtures",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: fetch-moon-textures",
+      "type": "npm",
+      "script": "fetch-moon-textures",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: rig",
+      "type": "npm",
+      "script": "rig",
+      "problemMatcher": []
+    },
+    {
+      "label": "Solar Wanderer: fetch-clouds",
+      "type": "npm",
+      "script": "fetch-clouds",
+      "problemMatcher": []
+    }
+  ]
+}

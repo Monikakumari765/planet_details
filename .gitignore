@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.vite/
+.audit-reports/
+public/textures/
+public/ephemeris/
+public/dem/
+public/data/ephemeris/
