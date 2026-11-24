@@ -18,7 +18,7 @@ Explore planetary orbits, descend to the surface, and travel outward to the edge
 </div>
 
 <p align="center">
-  <img src="./public/preview.png" alt="Planets Motion: a real-scale view across a planetary horizon and star-filled space" width="100%">
+  <img src="./public/preview.png" alt="Planets Motion: a detailed view of Earth against a star-filled background" width="100%">
 </p>
 
 <p align="center"><sub>One browser. A whole Solar System to explore.</sub></p>
