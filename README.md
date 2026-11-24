@@ -1,6 +1,6 @@
 <div align="center">
 
-# Solar Wanderer
+# Planets Motion
 
 ### Explore a 1:1 real-time model of the Solar System
 
@@ -15,13 +15,13 @@ Travel from planetary orbits to the surface, then zoom out to the distant Solar 
 
 **Maintainer:** Monika Kumari
 
-![Solar Wanderer preview](./public/preview.png)
+![Planets Motion preview](./public/preview.png)
 
 </div>
 
 ## About
 
-Solar Wanderer is a real-scale 3D exploration application that runs in a web browser. It combines sampled NASA/JPL states with analytical orbital models to show the positions and motion of planets, moons, comets, and other Solar System bodies. You can explore from space, descend through an atmosphere, and move around on supported planetary surfaces.
+Planets Motion is a real-scale 3D exploration application that runs in a web browser. It combines sampled NASA/JPL states with analytical orbital models to show the positions and motion of planets, moons, comets, and other Solar System bodies. You can explore from space, descend through an atmosphere, and move around on supported planetary surfaces.
 
 This project is an astronomy visualization and educational experience. It does **not** implement relativistic time-dilation telemetry, atmospheric spectroscopy, AI-generated habitability scores, or life-support probability calculations.
 
