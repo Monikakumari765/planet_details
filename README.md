@@ -1,221 +1,79 @@
 <div align="center">
 
-# 🚀 Solar Wanderer
+# Solar Wanderer
 
-**The first stop on humanity's journey to becoming an interstellar civilization.**
+### Explore a 1:1 real-time model of the Solar System
 
-A 1:1 real-time solar system explorer — entirely in your browser. Now on your phone.
+An interactive, browser-based Solar System explorer powered by NASA/JPL ephemeris data.
+Travel from planetary orbits to the surface, then zoom out to the distant Solar System.
 
-Powered by NASA JPL ephemerides. The planets are where they are **right now**.
-
-[![Live Demo](https://img.shields.io/badge/▶%20Live%20Demo-sw.icodestar.net-4a9eff?style=for-the-badge)](https://sw.icodestar.net)
+[![Live demo](https://img.shields.io/badge/Live%20demo-sw.icodestar.net-4a9eff?style=for-the-badge)](https://sw.icodestar.net)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Three.js](https://img.shields.io/badge/Three.js-0.165-black?style=for-the-badge&logo=three.js)](https://threejs.org)
-[![Stars](https://img.shields.io/github/stars/hyqzz/Solar-Wanderer?style=for-the-badge&color=yellow)](https://github.com/hyqzz/Solar-Wanderer/stargazers)
 
-*Zero install · Zero account · Zero backend · Desktop **&** mobile · ~200 kB gzipped · MIT open source*
+**Repository:** [Monikakumari765/PLANETS-DETAIL](https://github.com/Monikakumari765/PLANETS-DETAIL)
 
-<br>
+**Maintainer:** Monika Kumari
 
-### ▶ Demo video
-
-<a href="https://youtu.be/3rwShi6oF0o" title="Play Solar Wanderer demo on YouTube">
-  <img src="docs/sdlc/screenshots/example/youtube-demo-poster.jpg" alt="▶ Click to play — Solar Wanderer demo video on YouTube" width="240">
-</a>
-
-<br>
-
-[![Watch demo on YouTube](https://img.shields.io/badge/▶%20Watch%20Demo%20Video-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtu.be/3rwShi6oF0o)
+![Solar Wanderer preview](./public/preview.png)
 
 </div>
 
----
+## About
 
-## 🌌 Why this matters
+Solar Wanderer is a real-scale 3D exploration application that runs in a web browser. It combines sampled NASA/JPL states with analytical orbital models to show the positions and motion of planets, moons, comets, and other Solar System bodies. You can explore from space, descend through an atmosphere, and move around on supported planetary surfaces.
 
-We all learned the names of the planets as children. But have you ever **been** there?
+This project is an astronomy visualization and educational experience. It does **not** implement relativistic time-dilation telemetry, atmospheric spectroscopy, AI-generated habitability scores, or life-support probability calculations.
 
-Most space apps make you choose: either scientifically accurate, or beautiful and immersive. Solar Wanderer does both. It puts the real solar system — every planet, every moon, every AU — into a web page that anyone can open, on any device, for free.
+## Features
 
-Our mission is simple:
+- **Real-scale exploration:** Solar System distances are represented at a 1:1 kilometre scale, from close-up surface views out to the Oort Cloud.
+- **Ephemerides:** Uses sampled JPL states where available and analytical models as fallbacks. Sampled data is loaded progressively by target and year.
+- **Explore in multiple ways:** Orbit a body, fly through space, or walk on supported surfaces; the interface also supports touch controls on mobile devices.
+- **Rich Solar System:** Explore planets and moons, the asteroid and Kuiper belts, trans-Neptunian objects, comets, and Voyager spacecraft.
+- **Detailed rendering:** Three.js, WebGL2, atmospheric effects, rings, procedural surface details, and optional terrain data.
+- **Bilingual interface:** English and Chinese entry points.
 
-> **Before humanity becomes an interstellar species, we must first truly see our own backyard.**
+## Preview
 
-When a child stands on the Moon, turns around, and sees Earth as a tiny blue marble in the black sky, something changes. When a student pulls back from Earth until the planets shrink to dots and the Oort Cloud appears, their sense of scale changes forever. When a teacher can take an entire classroom to Mars in five minutes, science education changes.
+Try the [live demo](https://sw.icodestar.net), or build and run the project locally.
 
-This is not just a simulation. It is an **invitation**.
+## Run locally
 
----
-
-## ✨ What makes it different
-
-| | Solar Wanderer |
-|---|---|
-| **Scale** | True 1:1 km — every planet, every moon, every AU, from 0.5 m to 100,000 AU |
-| **Accuracy** | NASA JPL Horizons verified · ≤0.074° for planets · 21 moons fitted from state vectors |
-| **Immersion** | Seamless descent from orbit → atmosphere → surface → walking → underwater (no cuts, no loading) |
-| **Scope** | Sun to the Oort Cloud (100,000 AU) · asteroid belt · Kuiper belt · 28 real TNOs · 4 comets · past the heliopause where Voyager 1 & 2 are now |
-| **Anywhere** | Desktop keyboard/mouse **and** full mobile touch — same physics, same scale |
-| **Size** | ~200 kB gzipped JS · no server · no GPU farm |
-| **Open** | MIT licensed · all data from public NASA/IAU sources · verifiable against JPL Horizons |
-
----
-
-## 🎯 The Road Ahead: Help us build the first interstellar stepping stone
-
-Solar Wanderer already works. But to become *indistinguishable from reality* and reach billions of people, we need your help.
-
-We are building toward four pillars:
-
-1. **🪐 Realism that is indistinguishable from reality**
-   - Real global DEM terrain: Moon (LOLA), Mars (MOLA), Earth (ETOPO1); local HiRISE / photographic surface detail remains future work
-   - Real solar/lunar/planetary eclipse shadows
-   - Dynamic weather, clouds, dust storms, auroras
-   - High-resolution 16K–32K textures
-   - Real spacecraft with 3D models and mission histories
-
-2. **🥽 Immersion that makes you feel you are there**
-   - WebXR / VR support
-   - First-person spacesuit HUD
-   - Environmental storytelling: Apollo landing sites, rover tracks, landmarks
-   - Dynamic time-of-day and seasonal visuals
-   - Spatial orientation aids and scale references
-
-3. **📚 A public science education system**
-   - Structured guided tours and courses
-   - Voice narration in multiple languages
-   - Teacher/classroom/museum toolkits
-   - Real-time astronomical event simulations
-   - A scalable content platform for facts, stories, and lessons
-
-4. **🌍 Reach: let the world know**
-   - Multi-language support
-   - Video content, blogs, SEO
-   - Partnerships with schools, museums, planetariums, and space agencies
-   - Community-driven content and translations
-
-**👉 See the full master plan:** [`ROADMAP.md`](ROADMAP.md)
-
----
-
-## 🙌 How to contribute
-
-We welcome contributors of all kinds: developers, astronomers, educators, translators, designers, writers, video creators, and space enthusiasts.
-
-### Quick start
+Requirements: Node.js and npm.
 
 ```bash
-git clone https://github.com/hyqzz/Solar-Wanderer.git
-cd Solar-Wanderer
+git clone https://github.com/Monikakumari765/PLANETS-DETAIL.git
+cd PLANETS-DETAIL
 npm install
-npm run dev      # → http://localhost:5173
-npm test         # 33 precision tests (no network needed)
-npm run verify   # live cross-check against NASA JPL Horizons (needs internet)
+npm run dev
 ```
 
-### Most wanted contributions
+Vite prints a local URL, usually `http://localhost:5173`.
 
-| Area | What's needed | Good first issue? |
-|------|--------------|-------------------|
-| **Real terrain** | USGS LOLA (Moon) / MOLA (Mars) DEM tile streaming | ⭐ Yes |
-| **Eclipse shadows** | Sun–Moon–Earth shadow volumes | Advanced |
-| **Sound** | Ambient radio hiss, surface crunch, underwater | ⭐ Yes |
-| **Translations** | English UI; additional languages are planned | ⭐ Yes |
-| **Education content** | Guided tours, facts, quizzes, lesson plans | ⭐ Yes |
-| **VR / WebXR** | Immersive headset support | Advanced |
-| **Accuracy** | VSOP87 + ELP2000 for ±3000 year validity | Advanced |
-| **Bookmarks** | Save/restore position + time | ⭐ Yes |
-| **Spacecraft models** | Voyager, New Horizons, Juno, Cassini 3D models and trajectories | ⭐ Yes |
-| **Outreach** | Blog posts, videos, social media, school partnerships | ⭐ Yes |
+Useful commands:
 
-**Check our [Issues](https://github.com/hyqzz/Solar-Wanderer/issues) tab** — we are turning the master plan into actionable issues. Pick one, comment, and jump in.
+```bash
+npm test          # Run the offline Node.js test suite
+npm run build     # Build the static site into dist/
+npm run preview   # Preview a production build
+npm run verify    # Compare ephemerides with NASA/JPL Horizons (requires internet)
+```
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for code style and PR process.
+## Large data assets
 
----
+To keep this GitHub repository lightweight, large generated or downloaded asset directories are not included: `public/textures/`, `public/dem/`, and `public/data/ephemeris/`. The application can use procedural rendering and analytical ephemeris fallbacks where those assets are unavailable. The project includes scripts for regenerating data; for example, `npm run fetch-dem` and `npm run fetch-ephemeris` require an internet connection and create substantial local files.
 
-## 🎮 Try it now
+## Tech stack
 
-**[https://sw.icodestar.net](https://sw.icodestar.net)**
+- JavaScript (native ES modules; no TypeScript)
+- Three.js 0.165
+- Vite 5
+- WebGL2 and GLSL shaders
+- Node.js built-in test runner
 
-No install. No account. Just open and go.
+## Credits and license
 
-**Recommended first experiences:**
-1. Open the directory → tap **Moon** → pinch all the way in → land → look up: the blue Earth hangs in the black sky.
-2. Pull back from Earth until the planets become dots, then keep going until the Oort Cloud appears.
-3. Double-click **Saturn** and zoom in until you can see the Cassini Division in the rings.
+This repository is based on [Solar Wanderer](https://github.com/hyqzz/Solar-Wanderer), an MIT-licensed project. The upstream copyright and license notices are retained in [LICENSE](LICENSE). Third-party data and asset notices are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
----
-
-## 🛠 Tech stack
-
-- Three.js 0.165 · Vite 5 · native ESM · WebGL2 · logarithmic depth buffer
-- Pure-function ephemeris layer (Node-testable)
-- Floating-origin rendering for 1:1 km scale
-- GPU auto-tiering across three tiers (High / Medium / Low), by GPU generation rather than vendor alone
-
-### Quality tiers
-
-The app picks a tier from the WebGL renderer string, then keeps adjusting the render
-scale at runtime to hold the frame rate. Physical scale, DEM and ephemerides are
-identical in all three tiers — only rendering work differs.
-
-| Tier | Picked for | What it adds |
-|------|-----------|--------------|
-| High | RTX / GTX 1060+ / RX 5500+ / Arc A / Apple M-Pro·Max·Ultra | Volumetric clouds, 1.5× pixel ratio, 8K textures, 2048 shadow maps |
-| Medium | Mid-range and older discrete GPUs (GTX 750 Ti–980, RX 480–550, base Apple M1/M2/M3) | Procedural surface detail, 4K textures, 1536 shadow maps — no volumetric clouds |
-| Low | Integrated GPUs, software rendering, mobile | Flat shading detail off, 1024 shadow maps |
-
-Override with `?quality=high`, `?quality=medium` or `?quality=low` (`lite` is accepted
-as an alias for `low`). Volumetric clouds are High-only: measured on the same scene they
-cost about 3.2× Medium, and Medium is already 2.0× Low.
-
----
-
-## 📊 Accuracy
-
-| Model | Validation and coverage |
-|-------|-------------------------|
-| Sampled JPL states (65 targets) | 2025-01-01 through 2035-01-01 TDB, sharded by year; off-grid comparisons across the whole window pass <0.001° and <10 km |
-| Planet fallback | VSOP87 / analytic models; use `npm run verify` for live comparison |
-| Moon fallback | Complete Meeus periodic terms; checked separately when sampled states are unavailable |
-| Satellite fallback | Empirical fitted elements from a 7-epoch least-squares fit; ~0.003° at the fit epoch, degrading to ~2° within 180 days (tracked by tests, not hidden) |
-| Rotation | IAU models; independent of the sampled orbital states |
-
-Sample interpolation differences are not absolute physical uncertainties. States load progressively, one year-shard at a time, so a 10-year window costs roughly the same per body as the previous 16-month window; outside the shard that is loaded, or during resource failures, the application uses approximate models, identified per target in the HUD. Refresh with `npm run fetch-ephemeris` (resumable; cached shards are reused) and validate with `npm run verify-release` before extending the interval.
-
-The renderer does not yet reproduce every surface at photographic detail. Global DEM tiles are coarse, unobserved regions use procedural assumptions, and clouds / solar and comet activity are not current observation reconstructions. [Release evidence and limitations](RELEASE_READINESS.md) distinguish integrated-GPU Low, discrete-GPU High, and hardware that has not been tested.
-
----
-
-## 📣 Spread the word
-
-If Solar Wanderer made you feel small in a good way, please:
-
-- ⭐ Star this repo
-- 🔗 Share [sw.icodestar.net](https://sw.icodestar.net)
-- 📺 Make a video or write a post about your experience
-- 🏫 Tell a teacher, a student, or a museum curator
-
-Together, we can make the solar system feel like home — and prepare humanity for the stars.
-
----
-
-## Credits
-
-| | |
-|---|---|
-| **Ephemerides** | NASA JPL (*Standish 1992* planetary elements · Horizons API state vectors) |
-| **Textures** | [Solar System Scope](https://www.solarsystemscope.com/textures/) CC-BY-4.0 · Steve Albers SOS · NASA JPL Photojournal (public domain) |
-| **Rotation models** | IAU/WGCCRE reports |
-| **Bright stars** | Hipparcos catalog |
-
----
-
-<div align="center">
-
-MIT © 2026 [hyqzz](https://github.com/hyqzz)
-
-*Built with Three.js · Verified against NASA JPL · Made to feel small*
-
-</div>
+NASA/JPL ephemeris services and public planetary science data are acknowledged by their respective providers. See the notices and source links in the repository for details.
