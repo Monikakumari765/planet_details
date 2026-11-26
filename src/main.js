@@ -514,8 +514,6 @@ async function init() {
     onFlyToLocation: focusObserverLocation,
   });
   mountCameraControls({
-    onZoomIn: () => zoomOrbitCamera(0.72),
-    onZoomOut: () => zoomOrbitCamera(1 / 0.72),
     onNormalView: resetNormalView,
   });
   setupLabels();
@@ -933,11 +931,6 @@ function prepareOrbitCameraAction() {
     orbitCam.adoptPosition(orbitEnv, orbitCam.focusId, orbitCam.posKm, orbitCam.quat);
   }
   observerFocusTween = null;
-}
-
-function zoomOrbitCamera(factor) {
-  prepareOrbitCameraAction();
-  orbitCam.zoomByFactor(factor, orbitEnv);
 }
 
 function resetNormalView() {

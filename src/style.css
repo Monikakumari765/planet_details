@@ -430,19 +430,6 @@ html, body {
   padding-bottom: max(10px, env(safe-area-inset-bottom));
 }
 
-/* EnglishEnglishEnglishEnglishEnglish */
-#tc-zoom-group {
-  display: flex; flex-direction: column; gap: 4px;
-  pointer-events: auto;
-}
-.tc-zoom-btn {
-  width: 44px; height: 44px; border-radius: 10px;
-  background: rgba(8, 16, 28, 0.75); border: 1px solid rgba(110, 160, 210, 0.3);
-  color: #cfe3f5; font-size: 22px; line-height: 1;
-  backdrop-filter: blur(6px);
-}
-.tc-zoom-btn:active { background: rgba(40, 80, 130, 0.85); }
-
 /* EnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglish） */
 #tc-actions {
   display: flex; flex-direction: column; gap: 4px;
@@ -799,13 +786,6 @@ html.touch .help-inner { touch-action: pan-y; }
   gap: 5px;
 }
 
-/* EnglishEnglishEnglishEnglish：EnglishEnglishEnglishEnglish */
-.touch #tc-zoom-group { flex-direction: row; gap: 4px; }
-.touch .tc-zoom-btn {
-  width: 40px; height: 40px;
-  font-size: 18px; border-radius: 9px;
-}
-
 /* EnglishEnglishEnglishEnglish：EnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglish */
 .touch #tc-actions {
   flex-direction: row;
@@ -891,7 +871,6 @@ html.touch .help-inner { touch-action: pan-y; }
 #tc-time-btn,
 #tc-menu-btn,
 #tc-bottom-bar,
-.tc-zoom-btn,
 .tc-action-btn,
 .tc-drawer-btn,
 .tc-right-btn {
@@ -972,7 +951,6 @@ html.touch .help-inner { touch-action: pan-y; }
   box-shadow: var(--obsidian-shadow);
 }
 
-.touch .tc-zoom-btn,
 .touch .tc-action-btn,
 .touch .tc-drawer-btn,
 .touch .tc-right-btn {
@@ -1082,15 +1060,9 @@ html.touch .help-inner { touch-action: pan-y; }
     overflow-y: auto;
   }
 
-  .touch .tc-zoom-btn,
   .touch .tc-action-btn,
   .touch .tc-drawer-btn {
     min-height: 40px;
-  }
-
-  .touch .tc-zoom-btn,
-  .touch .tc-drawer-btn {
-    width: 40px;
   }
 
   .touch .tc-right-btn,
@@ -2130,15 +2102,9 @@ body.cinematic #ai-astro-lab { display: none !important; }
     flex: 1 1 0;
   }
 
-  .touch .tc-zoom-btn,
   .touch .tc-action-btn,
   .touch .tc-drawer-btn {
     min-height: 40px;
-  }
-
-  .touch .tc-zoom-btn,
-  .touch .tc-drawer-btn {
-    width: 40px;
   }
 
   .touch .tc-right-btn,

@@ -26,7 +26,6 @@ export class TouchControls {
     this.cb    = callbacks;
 
     // Held-zoom direction: -1=in, +1=out, 0=none
-    this._zoomDir = 0;
 
     // Joystick state
     this._jsPointerId = null;
@@ -187,18 +186,6 @@ export class TouchControls {
   _buildBottomBar(root) {
     const bar = this._el('div', { id: 'tc-bottom-bar' });
     root.appendChild(bar);
-
-    // Zoom group
-    const zGroup = this._el('div', { id: 'tc-zoom-group' });
-    bar.appendChild(zGroup);
-
-    const zIn  = this._btn(t('tc.zoomIn'),  'tc-zoom-in',  'tc-zoom-btn');
-    const zOut = this._btn(t('tc.zoomOut'), 'tc-zoom-out', 'tc-zoom-btn');
-    zGroup.appendChild(zIn);
-    zGroup.appendChild(zOut);
-
-    this._holdBtn(zIn,  () => { this._zoomDir = -1; }, () => { this._zoomDir = 0; });
-    this._holdBtn(zOut, () => { this._zoomDir =  1; }, () => { this._zoomDir = 0; });
 
     // Dynamic action group (mode-dependent, rebuilt in update)
     const actions = this._el('div', { id: 'tc-actions' });
@@ -443,11 +430,6 @@ export class TouchControls {
    */
   update(mode, nearest, orbitCam) {
     if (!this.root) return;
-
-    // Apply held zoom to input.wheel
-    if (this._zoomDir !== 0) {
-      this.input.wheel += this._zoomDir * 0.22;
-    }
 
     // Show/hide joystick + right buttons based on mode
     const needJoystick = mode === 'walk' || mode === 'fly';

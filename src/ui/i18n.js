@@ -248,8 +248,6 @@ const D = {
 
   // ── 触摸操作面板 ─────────────────────────────────────────────────────
   'tc.menu':      { zh: '☰ 天体', en: '☰ Bodies', es: '☰ Cuerpos', ja: '☰ 天体', fr: '☰ Corps', de: '☰ Körper', ru: '☰ Тела' },
-  'tc.zoomIn':    { zh: '＋', en: '＋', es: '＋', ja: '＋', fr: '＋', de: '＋', ru: '＋' },
-  'tc.zoomOut':   { zh: '－', en: '－', es: '－', ja: '－', fr: '－', de: '－', ru: '－' },
   'tc.dir':       { zh: '🎯', en: '🎯', es: '🎯', ja: '🎯', fr: '🎯', de: '🎯', ru: '🎯' },
   'tc.target':    { zh: 'ℹ️', en: 'ℹ️', es: 'ℹ️', ja: 'ℹ️', fr: 'ℹ️', de: 'ℹ️', ru: 'ℹ️' },
   'tc.land':      { zh: '🛬 降落', en: '🛬 Land', es: '🛬 Aterrizar', ja: '🛬 着陸', fr: '🛬 Atterrir', de: '🛬 Landen', ru: '🛬 Посадка' },
@@ -424,7 +422,6 @@ const HELP_TOUCH_EN = `
     <tr><td>Two-finger drag</td><td>Pan the space (no rotation)</td></tr>
     <tr><td>Tap a body / label</td><td>Select / lock focus</td></tr>
     <tr><td>Double-tap label</td><td>Fly to that body (GE animation)</td></tr>
-    <tr><td>＋ / － buttons</td><td>Hold to zoom in / out</td></tr>
     <tr><td>🪐 button</td><td>Toggle body directory drawer</td></tr>
     <tr><td>🎯 button</td><td>Toggle selected-body info panel</td></tr>
     <tr><td>✈ button</td><td>Fly to selected body</td></tr>
