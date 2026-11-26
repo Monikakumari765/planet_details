@@ -322,9 +322,6 @@ html, body {
   transition: left 0.6s ease;
 }
 #start-btn:hover .btn-shimmer { left: 150%; }
-.start-inner .hint {
-  margin-top: 20px; font-size: 13px; color: #5a7a9a;
-}
 /* ICP EnglishEnglishEnglish：EnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglish 3D EnglishEnglish */
 #beian {
   display: block; margin-top: 16px;

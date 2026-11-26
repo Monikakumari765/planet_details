@@ -217,24 +217,6 @@ const D = {
   'start.loadingTex': { zh: '加载真实行星贴图… {done}/{total}', en: 'Loading real planet textures… {done}/{total}', es: 'Cargando texturas reales de planetas… {done}/{total}', ja: '実惑星テクスチャを読み込み中… {done}/{total}', fr: 'Chargement des textures planétaires réelles… {done}/{total}', de: 'Echte Planetentexturen laden… {done}/{total}', ru: 'Загрузка текстур планет… {done}/{total}' },
   'start.enter': { zh: '点击进入太阳系', en: 'Enter Simulation', es: 'Entrar al sistema solar', ja: '太陽系に入る', fr: 'Entrer dans le système solaire', de: 'Sonnensystem betreten', ru: 'Войти в Солнечную систему' },
   'hud.hdLoading': { zh: '高清贴图加载中 {pct}%', en: 'Loading HD textures {pct}%', es: 'Cargando texturas HD {pct}%', ja: 'HDテクスチャ読み込み中 {pct}%', fr: 'Chargement des textures HD {pct}%', de: 'HD-Texturen laden {pct}%', ru: 'Загрузка HD-текстур {pct}%' },
-  'start.hint': {
-    zh: '进入后单击画面锁定鼠标 · H 查看完整操作说明',
-    en: 'Click to lock the pointer after entering · press H for full controls',
-    es: 'Clic para bloquear el puntero al entrar · pulsa H para ver los controles completos',
-    ja: '入場後クリックでポインタをロック · H で操作説明',
-    fr: 'Cliquez pour verrouiller le pointeur après l\'entrée · H pour les contrôles complets',
-    de: 'Klicken zum Sperren des Zeigers nach dem Eintritt · H für alle Steuerelemente',
-    ru: 'Кликните для захвата курсора после входа · H для полного руководства',
-  },
-  'start.hintTouch': {
-    zh: '单指旋转 · 双指缩放 · 双击标签前往',
-    en: 'One-finger rotate · pinch to zoom · double-tap label to fly',
-    es: 'Rotar con un dedo · pellizcar para zoom · doble toque en etiqueta para volar',
-    ja: '一本指で回転 · ピンチでズーム · ラベルをダブルタップで移動',
-    fr: 'Rotation à un doigt · pincer pour zoomer · double-tap sur l\'étiquette pour voler',
-    de: 'Mit einem Finger drehen · pinch zum Zoomen · Doppelklick auf Etikett zum Fliegen',
-    ru: 'Поворот одним пальцем · щипок для масштаба · двойное касание метки для полёта',
-  },
   'tip.gravityOn': { zh: '🛰 真实引力：推力只给加速度——可自由落体、可入轨（X 清速已禁用）', en: '🛰 Real gravity: thrust adds acceleration only — free-fall and orbit (X clear disabled)', es: '🛰 Gravedad real activada', ja: '🛰 実引力オン：自由落下と軌道投入が可能', fr: '🛰 Gravité réelle activée', de: '🛰 Echte Gravitation an', ru: '🛰 Реальная гравитация включена' },
   'tip.gravityOff': { zh: '🛰 已回到街机飞行手感', en: '🛰 Back to arcade flight', es: '🛰 Vuelo arcade', ja: '🛰 アーケード飛行に戻りました', fr: '🛰 Vol arcade', de: '🛰 Arcade-Flug', ru: '🛰 Аркадный полёт' },
   'hud.errCount': { zh: '⚠ 运行时错误 {n}（{tag}）· 点击复制', en: '⚠ Runtime errors {n} ({tag}) · click to copy', es: '⚠ Errores {n} · clic para copiar', ja: '⚠ 実行時エラー {n}（{tag}）· クリックでコピー', fr: '⚠ Erreurs {n} · cliquer pour copier', de: '⚠ Laufzeitfehler {n} · klicken zum Kopieren', ru: '⚠ Ошибок {n} · нажмите, чтобы скопировать' },
@@ -327,12 +309,6 @@ export function applyDomI18n(root = document) {
   for (const el of root.querySelectorAll('[data-i18n]')) el.textContent = t(el.getAttribute('data-i18n'));
   for (const el of root.querySelectorAll('[data-i18n-html]')) el.innerHTML = t(el.getAttribute('data-i18n-html'));
   for (const el of root.querySelectorAll('[data-i18n-ph]')) el.placeholder = t(el.getAttribute('data-i18n-ph'));
-
-  // 移动端：把启动提示改为触摸说明
-  if (isTouchDevice()) {
-    const hint = root.querySelector('.start-inner .hint');
-    if (hint) hint.textContent = t('start.hintTouch');
-  }
 
   // 非中文界面（en/es/ja/fr/de/ru）注入英文帮助文档；es/ja/fr/de/ru 暂用英文占位（#44,#45,#46）
   if (LANG !== 'zh') {
