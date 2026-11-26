@@ -58,9 +58,13 @@ import { createCameraFeel } from './engine/cameraFeel.js';
 import { bootstrapRenderer } from './engine/rendererBootstrap.js';
 import { mountAstrobiologyLab } from './ui/astroLab.js';
 import { createTerraformingOverlays } from './scene/terraformingOverlays.js';
+import { createCosmicMotion } from './scene/cosmicMotion.js';
 
 let builder = null;
 let terraformingOverlays = null;
+let sky = null;
+let cosmicMotion = null;
+let universeMotionEnabled = true;
 let terraformOverlayState = {
   showHabitableZone: false,
   showLightPulse: false,
@@ -109,6 +113,15 @@ window.addEventListener('terraform-physics-overlays-change', event => {
     targetPlanetId: String(detail.targetPlanetId ?? 'earth').toLowerCase(),
   };
   terraformingOverlays?.setState(terraformOverlayState);
+});
+window.addEventListener('continuous-universe-motion-change', event => {
+  const detail = event.detail;
+  if (!detail || typeof detail.enabled !== 'boolean') {
+    throw new TypeError('continuous-universe-motion-change requires an enabled boolean');
+  }
+  universeMotionEnabled = detail.enabled;
+  sky?.setMotionEnabled(universeMotionEnabled);
+  cosmicMotion?.setEnabled(universeMotionEnabled);
 });
 
 mountAstrobiologyLab();
@@ -281,7 +294,7 @@ const orbitCam = new OrbitCamera(camera);
 const simClock = new SimClock();
 const clock = new THREE.Clock();
 
-let comets, labels, searchUI, touchControls, sky, belts, oortCloud, tnoScene, smallBodies;
+let comets, labels, searchUI, touchControls, belts, oortCloud, tnoScene, smallBodies;
 let appMode = 'orbit'; // orbit | fly | walk
 const registry = new Map();
 let selectedId = null;
@@ -318,10 +331,16 @@ async function init() {
   terraformingOverlays.setState(terraformOverlayState);
 
   sky = createStarfield(builder.cache.get('milkyway.jpg'));
+  sky.setMotionEnabled(universeMotionEnabled);
   scene.add(sky.group); // EnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglish）
 
   // EnglishEnglishEnglishEnglishEnglishEnglish：EnglishEnglishEnglish 3D EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish，R11）。
   // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish——EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglish。
+  cosmicMotion = createCosmicMotion();
+  cosmicMotion.setEnabled(universeMotionEnabled);
+  scene.add(cosmicMotion.starGroup, cosmicMotion.dustGroup);
+  world.register(new Float64Array(3), cosmicMotion.dustGroup);
+
   scene.add(sky.brightGroup);
   world.register(new Float64Array(3), sky.brightGroup);
   loadStarCatalog().then((cat) => {
@@ -1028,6 +1047,10 @@ function loop() {
 
   // EnglishEnglishEnglishEnglish（EnglishEnglish=EnglishEnglishEnglishEnglish）
   try { world.update(ship.posKm); } catch (e) { loopErr('world', e); }
+  try {
+    sky?.update(dtReal);
+    cosmicMotion?.update(dtReal, camera.position);
+  } catch (e) { loopErr('cosmicMotion', e); }
   try {
     builder.postWorldUpdate(ship.posKm, performance.now() / 1000);
   } catch (e) {

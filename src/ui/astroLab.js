@@ -62,6 +62,7 @@ function mountMarkup(root) {
           <legend>3D physics overlays</legend>
           <label><input id="ai-lab-habitable-zone" type="checkbox"> <span>Show Habitable Zone Ring (0.95–1.67 AU)</span></label>
           <label><input id="ai-lab-light-pulse" type="checkbox"> <span>Show Earth–Target Light-Speed Pulse</span></label>
+          <label><input id="ai-lab-universe-motion" type="checkbox" checked> <span>Continuous Universe Motion</span></label>
         </fieldset>
 
         <div class="ai-lab-results" aria-live="polite">
@@ -105,6 +106,7 @@ export function mountAstrobiologyLab() {
   const oxygenSlider = byId('ai-lab-oxygen');
   const habitableZoneToggle = byId('ai-lab-habitable-zone');
   const lightPulseToggle = byId('ai-lab-light-pulse');
+  const universeMotionToggle = byId('ai-lab-universe-motion');
   const collapseButton = root.querySelector('.ai-lab-collapse');
   if (!collapseButton) throw new Error('Missing astrobiology lab collapse button');
   const sliders = [orbitSlider, pressureSlider, co2Slider, oxygenSlider];
@@ -121,6 +123,12 @@ export function mountAstrobiologyLab() {
         showLightPulse: lightPulseToggle.checked,
         targetPlanetId: selectedPlanet().id,
       },
+    }));
+  }
+
+  function updateUniverseMotion() {
+    window.dispatchEvent(new CustomEvent('continuous-universe-motion-change', {
+      detail: { enabled: universeMotionToggle.checked },
     }));
   }
 
@@ -233,7 +241,9 @@ export function mountAstrobiologyLab() {
   sliders.forEach(slider => slider.addEventListener('input', render));
   habitableZoneToggle.addEventListener('change', updatePhysicsOverlays);
   lightPulseToggle.addEventListener('change', updatePhysicsOverlays);
+  universeMotionToggle.addEventListener('change', updateUniverseMotion);
   byId('ai-lab-reset').addEventListener('click', () => resetControls({ restoreVisual: true }));
   resetControls();
   updatePhysicsOverlays();
+  updateUniverseMotion();
 }

@@ -140,8 +140,11 @@ function createZodiacalLight() {
 
 export function createStarfield(milkywayTex) {
   const group = new THREE.Group();
+  const rotatingDome = new THREE.Group();
+  group.add(rotatingDome);
   const fadeMats = []; // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglish：EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish）
   let milkyMat = null;
+  let motionEnabled = true;
 
   // EnglishEnglishEnglish：EnglishEnglishEnglishEnglishEnglishEnglish（NGP: RA 192.8595°, Dec 27.1284°；EnglishEnglish: RA 266.405°, Dec −28.936°）
   //
@@ -172,7 +175,7 @@ export function createStarfield(milkywayTex) {
     const m = new THREE.Matrix4().makeBasis(xg, y, zCol);
     mesh.quaternion.setFromRotationMatrix(m);
     mesh.renderOrder = -10;
-    group.add(mesh);
+    rotatingDome.add(mesh);
   }
 
   // **EnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglish。**
@@ -315,6 +318,10 @@ export function createStarfield(milkywayTex) {
 
   return {
     group,
+    update(dt) {
+      if (motionEnabled) rotatingDome.rotation.y += 0.00015 * dt;
+    },
+    setMotionEnabled(value) { motionEnabled = !!value; },
     /** EnglishEnglishEnglishEnglish（EnglishEnglishEnglish）：EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish */
     setSunDir(x, y, z) { zodiacal.uniforms.uSunDir.value.set(x, y, z); },
     brightGroup,       // EnglishEnglish main.js English scene.add + world.register([0,0,0], brightGroup)
