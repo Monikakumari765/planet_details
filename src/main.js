@@ -61,6 +61,7 @@ import { createTerraformingOverlays } from './scene/terraformingOverlays.js';
 import { createCosmicMotion } from './scene/cosmicMotion.js';
 import { CosmicAudio, normalizePlanetProximity } from './audio/cosmicAudio.ts';
 import { createUserObserverBeacon } from './scene/userObserverBeacon.js';
+import { createEarthOrbitDisplay } from './scene/earthOrbitDisplay.js';
 import { mountUserObserver } from './ui/userObserver.js';
 import {
   observerSurfacePoint,
@@ -71,6 +72,7 @@ import { planetPosition } from './astro/planets.js';
 let builder = null;
 let terraformingOverlays = null;
 let sky = null;
+let earthOrbitDisplay = null;
 let cosmicMotion = null;
 let observerBeacon = null;
 let observerUi = null;
@@ -383,6 +385,7 @@ init();
 async function init() {
   applyDomI18n();
   builder = await buildSolarSystem(scene, world, (d, total) => hud.setLoading(d, total), (d, total) => hud.setBgLoading(d, total));
+  earthOrbitDisplay = createEarthOrbitDisplay(builder.bodies.get('earth'));
   for (const [planetName, params] of pendingPlanetAtmosphereVisuals) {
     builder.setPlanetAtmosphereVisual(planetName, params);
   }
@@ -1040,6 +1043,7 @@ function loop() {
   // EnglishEnglishEnglishEnglish（try-catch EnglishEnglish：builder.update EnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish）
   try {
     builder.update(jdTT, ship.posKm);
+  earthOrbitDisplay?.update(jdTT, camera, orbitCam.focusId, appMode);
   } catch (e) {
     if (!loop._builderErr) {
       loop._builderErr = true;

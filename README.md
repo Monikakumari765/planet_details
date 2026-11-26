@@ -86,7 +86,7 @@ Open the local URL printed by Vite (usually `http://localhost:5173`).
 
 ## Data and assets
 
-Large downloaded or generated assets are intentionally excluded from this repository to keep it lightweight. This includes `public/textures/`, `public/dem/`, and `public/data/ephemeris/`. Without those files, the application uses procedural rendering and analytical ephemeris fallbacks where available.
+Large downloaded or generated assets are intentionally excluded from this repository to keep it lightweight. The compact 2K Earth day, night-light, and cloud maps are included so the default globe keeps its detailed observatory look on static deployments; other maps, `public/dem/`, and `public/data/ephemeris/` remain optional. Missing assets use procedural rendering and analytical ephemeris fallbacks where available. Earth’s low-orbit paths are illustrative, not live satellite telemetry.
 
 Regenerate optional data when needed:
 
