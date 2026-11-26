@@ -196,24 +196,6 @@ html, body {
 #dir-body::-webkit-scrollbar { width: 6px; }
 #dir-body::-webkit-scrollbar-thumb { background: rgba(110, 160, 210, 0.3); border-radius: 3px; }
 
-/* ---------- GitHub Star EnglishEnglish ---------- */
-#github-star {
-  display: inline-flex; align-items: center; gap: 6px;
-  margin-top: 22px;
-  padding: 8px 20px; font-size: 13px; font-family: inherit;
-  color: #e6edf3; background: rgba(33, 110, 60, 0.35);
-  border: 1px solid rgba(63, 185, 80, 0.4); border-radius: 20px;
-  text-decoration: none; letter-spacing: 0.5px;
-  transition: background 0.25s, border-color 0.25s, transform 0.25s;
-  touch-action: manipulation;
-}
-#github-star:hover {
-  background: rgba(63, 185, 80, 0.25); border-color: #3fb950;
-  transform: translateY(-1px);
-}
-.star-icon { display: inline-block; transition: transform 0.3s ease; }
-#github-star:hover .star-icon { transform: rotate(15deg) scale(1.15); }
-
 /* ---------- EnglishEnglishEnglish ---------- */
 #start {
   position: fixed; inset: 0; z-index: 100;
