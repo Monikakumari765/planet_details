@@ -34,9 +34,12 @@ Planets Motion is an interactive 3D astronomy experience built around a true 1:1
 | Planets, moons, comets, trans-Neptunian objects, and spacecraft | Orbit, fly freely, land, and walk on supported worlds |
 | Rings, atmospheres, procedural surface detail, and optional terrain | A real-time simulation with time controls and touch support |
 | An interactive, offline planetary habitability lab | Compare Solar System baselines, adjust atmospheric scenarios, and inspect illustrative AI estimates |
+| A live Earth observer beacon | Pin a one-time browser GPS fix or enter coordinates manually; calculate local rotation and planet-horizon telemetry |
 | English and Chinese entry points | Runs in a modern browser with WebGL2 |
 
 The habitability lab is an educational model, not a validated life-detection tool. Its pressure and gas sliders also update an independent atmospheric halo on the selected 3D planet. Gas-giant temperatures are cloud-top references, and exoplanet matches are approximate catalog comparisons.
+
+The optional Earth Observer requests GPS only after you click **Pin My Live Location**. Coordinates stay in memory in your browser and are never sent to a server; manual and default-coordinate options are available. Planet visibility is a geometric horizon estimate and does not model atmospheric refraction, terrain, or local obstructions.
 
 ## AI Astrobiology & Real-Time 3D Terraforming Lab
 

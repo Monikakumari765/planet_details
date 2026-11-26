@@ -13,7 +13,7 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { FXAAShader } from 'three/examples/jsm/shaders/FXAAShader.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
-import { SimClock } from './astro/time.js';
+import { SimClock, dateToJD, jdUTtoTT } from './astro/time.js';
 import { surfaceGravity } from './astro/bodies.js';
 import { World } from './engine/floating.js';
 import { Ship, Input } from './engine/ship.js';
@@ -60,11 +60,21 @@ import { mountAstrobiologyLab } from './ui/astroLab.js';
 import { createTerraformingOverlays } from './scene/terraformingOverlays.js';
 import { createCosmicMotion } from './scene/cosmicMotion.js';
 import { CosmicAudio, normalizePlanetProximity } from './audio/cosmicAudio.ts';
+import { createUserObserverBeacon } from './scene/userObserverBeacon.js';
+import { mountUserObserver } from './ui/userObserver.js';
+import {
+  observerSurfacePoint,
+  worldVectorToEquatorialDirection,
+} from './physics/userObserver.ts';
+import { planetPosition } from './astro/planets.js';
 
 let builder = null;
 let terraformingOverlays = null;
 let sky = null;
 let cosmicMotion = null;
+let observerBeacon = null;
+let observerUi = null;
+let observerFocusTween = null;
 let universeMotionEnabled = true;
 const cosmicAudio = new CosmicAudio();
 let terraformOverlayState = {
@@ -467,6 +477,11 @@ async function init() {
   }
 
   buildRegistry();
+  observerBeacon = createUserObserverBeacon(builder.bodies.get('earth'));
+  observerUi = mountUserObserver({
+    onLocationChange: coordinates => observerBeacon.setLocation(coordinates),
+    onFlyToLocation: focusObserverLocation,
+  });
   setupLabels();
   searchUI = new SearchUI(registry, (id) => flyTo(id), {
     getOrbits: () => orbitLinesOn,
@@ -800,6 +815,7 @@ function setupLabels() {
 function select(id) {
   ephemerisLoader.prefetch(id, simClock.jdTT);
   selectedId = id;
+  if (id !== 'earth') observerUi?.setTargetPlanet(id);
 }
 
 /** EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglishEnglish，~0.7° EnglishEnglish，R10）。EnglishEnglish { id, t, localDir, localDist } English null */
@@ -857,6 +873,54 @@ function flyTo(id, fromId = null) {
     ship.mode = 'fly';
   }
   orbitCam.flyTo(orbitEnv, id, fromId);
+}
+
+function focusObserverLocation(coordinates) {
+  if (!builder || !registry.has('earth')) {
+    throw new Error('Earth is not ready yet. Try again after the scene loads.');
+  }
+  if (appMode !== 'orbit') switchToOrbit();
+  if (orbitCam.flight) orbitCam.cancelFlight(orbitEnv);
+
+  const earth = builder.bodies.get('earth');
+  const { position } = observerSurfacePoint(
+    coordinates.latitude,
+    coordinates.longitude,
+    earth.phys.radiusKm,
+  );
+  const localDirection = new THREE.Vector3(position.x, position.y, position.z).normalize();
+  const targetLat = Math.asin(THREE.MathUtils.clamp(localDirection.y, -1, 1));
+  const targetLon = Math.atan2(-localDirection.z, localDirection.x);
+  const targetDistance = Math.max(
+    earth.phys.radiusKm * 1.04,
+    orbitCam.minDist(orbitEnv.get('earth')),
+  );
+
+  select('earth');
+  orbitCam.transition = null;
+  if (orbitCam.focusId !== 'earth') {
+    observerFocusTween = null;
+    orbitCam.setPendingFocus('earth', localDirection, targetDistance);
+    return;
+  }
+
+  orbitCam.pendingFocusId = null;
+  orbitCam.pendingTargetLocal = null;
+  observerFocusTween = {
+    fromLat: orbitCam.lat,
+    fromLon: orbitCam.lon,
+    toLat: targetLat,
+    toLon: targetLon,
+    lonDelta: shortestAngleDelta(orbitCam.lon, targetLon),
+    fromDistance: orbitCam.distTarget,
+    toDistance: targetDistance,
+    elapsed: 0,
+    duration: 1.15,
+  };
+}
+
+function shortestAngleDelta(from, to) {
+  return ((to - from + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI) - Math.PI;
 }
 
 function syncShipToOrbit() {
@@ -939,6 +1003,32 @@ function loop() {
       hud.tip('EnglishEnglishEnglishEnglishEnglishEnglish: ' + e.message);
     }
   }
+  if (observerUi?.getCoordinates() && performance.now() - (loop._observerUpdate ?? 0) > 750) {
+    loop._observerUpdate = performance.now();
+    try {
+      const date = new Date();
+      const targetId = observerUi.getTargetPlanet();
+      let direction = null;
+      if (targetId !== 'earth') {
+        const jdNowTT = jdUTtoTT(dateToJD(date));
+        const earthPosition = planetPosition('earth', jdNowTT);
+        const targetPosition = planetPosition(targetId, jdNowTT);
+        const worldDirection = eclToWorldArr({
+          x: targetPosition.x - earthPosition.x,
+          y: targetPosition.y - earthPosition.y,
+          z: targetPosition.z - earthPosition.z,
+        });
+        direction = worldVectorToEquatorialDirection({
+          x: worldDirection[0],
+          y: worldDirection[1],
+          z: worldDirection[2],
+        });
+      }
+      observerUi.update(date, direction);
+    } catch (e) {
+      loopErr('observerTelemetry', e);
+    }
+  }
   try { comets.update(jdTT, ship.posKm); } catch (e) { loopErr('comets', e); }
   try { tnoScene.update(jdTT, ship.posKm); } catch (e) { loopErr('tnoScene', e); }
   try { smallBodies.update(jdTT, ship.posKm); } catch (e) { loopErr('smallBodies', e); }
@@ -975,6 +1065,26 @@ function loop() {
   if (appMode === 'orbit') {
     // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（GE EnglishEnglish）
     if (orbitCam.flight && input.drag.active) orbitCam.cancelFlight(orbitEnv);
+    if (observerFocusTween) {
+      if (input.drag.active || input.pan.active || input.wheel !== 0) {
+        observerFocusTween = null;
+      } else {
+        const tween = observerFocusTween;
+        tween.elapsed = Math.min(tween.elapsed + dtReal, tween.duration);
+        const t = tween.elapsed / tween.duration;
+        const eased = t * t * (3 - 2 * t);
+        orbitCam.lat = tween.fromLat + (tween.toLat - tween.fromLat) * eased;
+        orbitCam.lon = tween.fromLon + tween.lonDelta * eased;
+        orbitCam.distTarget =
+          tween.fromDistance + (tween.toDistance - tween.fromDistance) * eased;
+        orbitCam.vLat = orbitCam.vLon = 0;
+        if (t >= 1) {
+          orbitCam.lat = tween.toLat;
+          orbitCam.lon = tween.toLon;
+          observerFocusTween = null;
+        }
+      }
+    }
     orbitCam.update(dtReal, input, orbitEnv);
     syncShipToOrbit();
     // EnglishEnglishEnglish（m/s）：EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglish ship.vel——
@@ -1075,6 +1185,7 @@ function loop() {
   try {
     sky?.update(dtReal);
     cosmicMotion?.update(dtReal, camera.position);
+    observerBeacon?.update(dtReal);
   } catch (e) { loopErr('cosmicMotion', e); }
   try {
     let proximity = 0;
