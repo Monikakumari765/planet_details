@@ -62,7 +62,6 @@ import { createCosmicMotion } from './scene/cosmicMotion.js';
 import { CosmicAudio, normalizePlanetProximity } from './audio/cosmicAudio.ts';
 import { createUserObserverBeacon } from './scene/userObserverBeacon.js';
 import { mountUserObserver } from './ui/userObserver.js';
-import { mountCameraControls } from './ui/cameraControls.js';
 import {
   observerSurfacePoint,
   worldVectorToEquatorialDirection,
@@ -80,7 +79,6 @@ let touchControls = null;
 let observerFocusTween = null;
 let universeMotionEnabled = true;
 const cosmicAudio = new CosmicAudio();
-const NORMAL_VIEW_DISTANCE_KM = 45 * KM_PER_AU;
 let terraformOverlayState = {
   showHabitableZone: false,
   showLightPulse: false,
@@ -513,9 +511,6 @@ async function init() {
     onLocationChange: coordinates => observerBeacon.setLocation(coordinates),
     onFlyToLocation: focusObserverLocation,
   });
-  mountCameraControls({
-    onNormalView: resetNormalView,
-  });
   setupLabels();
   searchUI = new SearchUI(registry, (id) => flyTo(id), {
     getOrbits: () => orbitLinesOn,
@@ -922,25 +917,6 @@ function flyTo(id, fromId = null, arrivalDistance = null) {
     ship.mode = 'fly';
   }
   orbitCam.flyTo(orbitEnv, id, fromId, arrivalDistance);
-}
-
-function prepareOrbitCameraAction() {
-  if (appMode !== 'orbit') switchToOrbit();
-  if (orbitCam.flight) orbitCam.cancelFlight(orbitEnv);
-  if (orbitCam.transition || orbitCam.pendingFocusId) {
-    orbitCam.adoptPosition(orbitEnv, orbitCam.focusId, orbitCam.posKm, orbitCam.quat);
-  }
-  observerFocusTween = null;
-}
-
-function resetNormalView() {
-  prepareOrbitCameraAction();
-  if (orbitCam.focusId === 'sun') {
-    orbitCam.adoptPosition(orbitEnv, 'sun', orbitCam.posKm, orbitCam.quat);
-    orbitCam.setDistanceTarget(NORMAL_VIEW_DISTANCE_KM, orbitEnv);
-    return;
-  }
-  flyTo('sun', null, NORMAL_VIEW_DISTANCE_KM);
 }
 
 function focusObserverLocation(coordinates) {

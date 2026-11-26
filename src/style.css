@@ -1371,73 +1371,6 @@ html.touch .help-inner { touch-action: pan-y; }
   }
 }
 
-/* ── Floating camera navigation ──────────────────────────────────── */
-#camera-controls {
-  position: fixed;
-  z-index: 25;
-  top: 82px;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: calc(100vw - 16px);
-  pointer-events: none;
-}
-
-.camera-controls-pill {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px;
-  border: 1px solid rgba(56, 189, 248, 0.28);
-  border-radius: 999px;
-  background: rgba(3, 6, 15, 0.88);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  pointer-events: auto;
-}
-
-.camera-controls-pill button {
-  min-height: 38px;
-  padding: 0 11px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background: rgba(15, 31, 48, 0.88);
-  color: #e0f2fe;
-  font: inherit;
-  font-size: 11px;
-  font-weight: 650;
-  white-space: nowrap;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-.camera-controls-pill button:hover {
-  border-color: rgba(56, 189, 248, 0.42);
-  background: rgba(14, 45, 66, 0.96);
-}
-
-.camera-controls-pill button:focus-visible {
-  outline: 2px solid #38bdf8;
-  outline-offset: 2px;
-}
-
-@media (max-width: 768px) {
-  #camera-controls {
-    top: 82px;
-  }
-
-  .camera-controls-pill {
-    gap: 3px;
-    padding: 4px;
-  }
-
-  .camera-controls-pill button {
-    min-height: 38px;
-    padding: 0 8px;
-    font-size: 10px;
-  }
-}
-
 /* EnglishEnglishEnglishEnglishEnglishEnglish：EnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（English hud.setErrorCount） */
 #hud-err {
   position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
@@ -2164,5 +2097,4 @@ body.cinematic #ai-astro-lab { display: none !important; }
     overflow-wrap: anywhere;
   }
 
-  #camera-controls { top: 96px; }
 }
