@@ -358,6 +358,95 @@ function sphereGeo(radiusKm, big) {
   return new THREE.SphereGeometry(radiusKm, big ? wHi : wLo, big ? hHi : hLo);
 }
 
+const HALO_DEFAULT_PRESSURE_ATM = {
+  mercury: 0.001, venus: 92, earth: 1, mars: 0.0064,
+  jupiter: 1, saturn: 1, uranus: 1, neptune: 1,
+};
+const HALO_MIN_PRESSURE_ATM = 0.001;
+const HALO_MAX_PRESSURE_ATM = 100;
+const HALO_DEFAULT_COLOR = new THREE.Color('#c9f4ff');
+const HALO_OXYGEN_COLOR = new THREE.Color('#38bdf8');
+const HALO_CARBON_DIOXIDE_COLOR = new THREE.Color('#f97316');
+const HALO_BALANCED_COLOR = new THREE.Color('#e9fcff');
+
+function haloPressureValues(pressureAtm) {
+  const pressure = THREE.MathUtils.clamp(pressureAtm, HALO_MIN_PRESSURE_ATM, HALO_MAX_PRESSURE_ATM);
+  const normalized = (Math.log10(pressure) + 3) / 5;
+  return {
+    opacity: 0.05 + normalized * 0.7,
+    shellScale: 1.03 + normalized * 0.15,
+  };
+}
+
+function nativeHaloColor(phys) {
+  const rayleigh = phys.atmosphere?.rayleigh;
+  if (!rayleigh) return HALO_DEFAULT_COLOR.clone();
+  const channels = Array.isArray(rayleigh) ? rayleigh : [rayleigh, rayleigh, rayleigh];
+  const maximum = Math.max(...channels, 1e-12);
+  return new THREE.Color().setRGB(
+    channels[0] / maximum,
+    channels[1] / maximum,
+    channels[2] / maximum,
+  );
+}
+
+function terraformHaloColor(o2Pct, co2Pct) {
+  const oxygenWeight = THREE.MathUtils.clamp(o2Pct / 35, 0, 1);
+  const carbonDioxideWeight = THREE.MathUtils.clamp(co2Pct / 100, 0, 1);
+  const color = HALO_DEFAULT_COLOR.clone().lerp(HALO_OXYGEN_COLOR, oxygenWeight);
+  color.lerp(HALO_CARBON_DIOXIDE_COLOR, carbonDioxideWeight);
+  const balancedWeight = Math.min(oxygenWeight, carbonDioxideWeight) * 0.8;
+  return color.lerp(HALO_BALANCED_COLOR, balancedWeight);
+}
+
+function createTerraformHaloMaterial(color, opacity) {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uColor: { value: color.clone() },
+      uOpacity: { value: opacity },
+      uFresnelPower: { value: 2.4 },
+    },
+    vertexShader: /* glsl */ `
+      #include <common>
+      #include <logdepthbuf_pars_vertex>
+      varying vec3 vNormalView;
+      varying vec3 vViewDirection;
+      void main() {
+        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+        vNormalView = normalize(normalMatrix * normal);
+        vViewDirection = normalize(-mvPosition.xyz);
+        gl_Position = projectionMatrix * mvPosition;
+        #include <logdepthbuf_vertex>
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      #include <common>
+      #include <logdepthbuf_pars_fragment>
+      uniform vec3 uColor;
+      uniform float uOpacity;
+      uniform float uFresnelPower;
+      varying vec3 vNormalView;
+      varying vec3 vViewDirection;
+      void main() {
+        #include <logdepthbuf_fragment>
+        float fresnel = pow(
+          1.0 - max(dot(normalize(vNormalView), normalize(vViewDirection)), 0.0),
+          uFresnelPower
+        );
+        float alpha = fresnel * uOpacity;
+        gl_FragColor = vec4(uColor, alpha);
+      }
+    `,
+    side: THREE.FrontSide,
+    transparent: true,
+    depthTest: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    toneMapped: false,
+    fog: false,
+  });
+}
+
 /** EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish：EnglishEnglish/EnglishEnglish=2（EnglishEnglish+EnglishEnglishEnglishEnglish），EnglishEnglishEnglishEnglishEnglish=1，EnglishEnglish=0 */
 function detailModeOf(phys) {
   if (!QUALITY.detail) return 0;
@@ -380,6 +469,7 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress) {
   const bodies = new Map();
   const orbitLines = new THREE.Group();
   scene.add(orbitLines);
+  const terraformHaloGeometry = new THREE.SphereGeometry(1, 48, 32);
 
   // ---------- EnglishEnglish ----------
   const sunPhys = BODIES.sun;
@@ -485,6 +575,27 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress) {
       posKm: new Float64Array(3), mat,
       cloudFile,   // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglish or EnglishEnglishEnglish），EnglishEnglishEnglish
     };
+
+    if (!skipAtmo) {
+      const defaults = haloPressureValues(HALO_DEFAULT_PRESSURE_ATM[id]);
+      const color = nativeHaloColor(phys);
+      const haloMat = createTerraformHaloMaterial(color, defaults.opacity);
+      const halo = new THREE.Mesh(terraformHaloGeometry, haloMat);
+      halo.name = `${id}-terraform-atmosphere-halo`;
+      halo.renderOrder = 11;
+      halo.scale.set(
+        phys.radiusKm * defaults.shellScale,
+        phys.radiusKm * defaults.shellScale * (1 - (phys.oblateness ?? 0)),
+        phys.radiusKm * defaults.shellScale,
+      );
+      group.add(halo);
+      entry.terraformHaloMesh = halo;
+      entry.terraformAtmosphereDefaults = {
+        color: color.clone(),
+        opacity: defaults.opacity,
+        shellScale: defaults.shellScale,
+      };
+    }
 
     // EnglishEnglish（EnglishEnglish；EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish）
     if (cloudTex) {
@@ -915,6 +1026,69 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress) {
       [...bodies.values()].filter(b => b.phys.id !== 'sun')), solarActivityNow);
   }
 
+  function setPlanetAtmosphereVisual(planetName, params = {}) {
+    const id = String(planetName).trim().toLowerCase();
+    const entry = bodies.get(id);
+    if (!entry?.terraformHaloMesh) return false;
+
+    const halo = entry.terraformHaloMesh;
+    const uniforms = halo.material.uniforms;
+    const surfaceUniforms = entry.mat.userData.uniforms;
+    const defaults = entry.terraformAtmosphereDefaults;
+    if (params.isReset) {
+      uniforms.uColor.value.copy(defaults.color);
+      uniforms.uOpacity.value = defaults.opacity;
+      surfaceUniforms.uTerraformTintColor.value.setHex(0x000000);
+      surfaceUniforms.uTerraformTintStrength.value = 0;
+      halo.scale.set(
+        entry.phys.radiusKm * defaults.shellScale,
+        entry.phys.radiusKm * defaults.shellScale * (1 - (entry.phys.oblateness ?? 0)),
+        entry.phys.radiusKm * defaults.shellScale,
+      );
+      return true;
+    }
+    if (
+      !Number.isFinite(params.pressureAtm) ||
+      !Number.isFinite(params.co2Pct) ||
+      !Number.isFinite(params.o2Pct) ||
+      !Number.isFinite(params.predictedTempK)
+    ) {
+      throw new TypeError('Atmosphere pressure, CO₂, O₂, and predicted temperature must be finite numbers');
+    }
+
+    const pressure = THREE.MathUtils.clamp(
+      params.pressureAtm,
+      HALO_MIN_PRESSURE_ATM,
+      HALO_MAX_PRESSURE_ATM,
+    );
+    const co2Pct = THREE.MathUtils.clamp(params.co2Pct, 0, 100);
+    const o2Pct = THREE.MathUtils.clamp(params.o2Pct, 0, 35);
+    const values = haloPressureValues(pressure);
+    uniforms.uColor.value.copy(terraformHaloColor(o2Pct, co2Pct));
+    uniforms.uOpacity.value = values.opacity;
+    const tintColor = surfaceUniforms.uTerraformTintColor.value;
+    let tintStrength = 0;
+    if (params.predictedTempK < 235) {
+      tintColor.setHex(0xbae6fd);
+      tintStrength = 0.035;
+    } else if (params.predictedTempK <= 325 && pressure >= 0.1) {
+      tintColor.setHex(0x0284c7);
+      tintStrength = 0.045;
+    } else if (params.predictedTempK > 350) {
+      tintColor.setHex(0xea580c);
+      tintStrength = 0.025 + Math.min(0.055, (params.predictedTempK - 350) * 0.00012);
+    } else {
+      tintColor.setHex(0x000000);
+    }
+    surfaceUniforms.uTerraformTintStrength.value = tintStrength;
+    halo.scale.set(
+      entry.phys.radiusKm * values.shellScale,
+      entry.phys.radiusKm * values.shellScale * (1 - (entry.phys.oblateness ?? 0)),
+      entry.phys.radiusKm * values.shellScale,
+    );
+    return true;
+  }
+
   // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglish → ImageData）
   const mapDataCache = new Map();
   function mapDataOf(id) {
@@ -948,6 +1122,7 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress) {
   }
 
   return { bodies, sunEntry, orbitLines, update, postWorldUpdate, mapDataOf, cache, upgrades, boostTextures: boost,
+    setPlanetAtmosphereVisual,
     /** EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish） */
     setSkyFade(f) { glintSkyFade = f > 0.4 ? 1 : 0; } };
 }

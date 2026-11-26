@@ -33,7 +33,18 @@ Planets Motion is an interactive 3D astronomy experience built around a true 1:1
 | --- | --- |
 | Planets, moons, comets, trans-Neptunian objects, and spacecraft | Orbit, fly freely, land, and walk on supported worlds |
 | Rings, atmospheres, procedural surface detail, and optional terrain | A real-time simulation with time controls and touch support |
+| An interactive, offline planetary habitability lab | Compare Solar System baselines, adjust atmospheric scenarios, and inspect illustrative AI estimates |
 | English and Chinese entry points | Runs in a modern browser with WebGL2 |
+
+The habitability lab is an educational model, not a validated life-detection tool. Its pressure and gas sliders also update an independent atmospheric halo on the selected 3D planet. Gas-giant temperatures are cloud-top references, and exoplanet matches are approximate catalog comparisons.
+
+## AI Astrobiology & Real-Time 3D Terraforming Lab
+
+The browser-only lab uses a deterministic client-side Multi-Layer Perceptron (MLP) to estimate surface temperature, Earth Similarity Index, and illustrative life-support potential. It also compares orbital flux and gravity with a small reference set of Kepler and TRAPPIST-1 exoplanets to show an approximate “twin” match. No model inference or planetary state is sent to a server.
+
+Adjust **Orbital Distance**, **Atmospheric Pressure**, **CO₂ %**, and **O₂ %** to update the predictions and the selected planet’s visuals in real time. WebGL displays a composition- and pressure-responsive atmospheric limb halo plus a subtle surface thermal tint for cryogenic, liquid-water-compatible, and very hot scenarios. These are visual indicators; they do not change the simulation’s ephemerides, planet textures, or existing atmospheric-scattering model. Use **Reset to Real Planet Data** to restore the baseline visuals.
+
+The optional **Habitable Zone Ring** marks 0.95–1.67 AU around the Sun. **Earth–Target Light-Speed Pulse** draws a live-position link from Earth to the selected planet and animates a cyan photon along it; pulse timing is accelerated for visibility.
 
 ### At a glance
 

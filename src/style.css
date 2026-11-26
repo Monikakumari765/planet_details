@@ -964,3 +964,229 @@ body.walk-mode::after {
       rgba(12,15,20,0.28) 82%,
       rgba(8,10,14,0.62) 100%);
 }
+
+/* ---------- AI Astrobiology Lab ---------- */
+#ai-astro-lab {
+  position: fixed;
+  right: 14px;
+  bottom: 76px;
+  z-index: 36;
+  width: min(360px, calc(100vw - 28px));
+  max-height: calc(100dvh - 28px);
+  color: #dceaff;
+  font-family: inherit;
+  user-select: text;
+  -webkit-user-select: text;
+  pointer-events: auto;
+}
+#ai-astro-lab .ai-lab-panel {
+  overflow: hidden;
+  border: 1px solid rgba(123, 184, 232, 0.32);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(10, 24, 42, 0.94), rgba(7, 13, 27, 0.9));
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.42), inset 0 1px rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.ai-lab-header {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(123, 184, 232, 0.18);
+}
+.ai-lab-eyebrow {
+  color: #75c9e8;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.35px;
+}
+.ai-lab-header h2 {
+  margin-top: 2px;
+  color: #f0f7ff;
+  font-size: 16px;
+  line-height: 1.2;
+}
+.ai-lab-collapse {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(129, 188, 232, 0.32);
+  border-radius: 9px;
+  background: rgba(68, 122, 170, 0.2);
+  color: #e6f4ff;
+  cursor: pointer;
+  font-size: 21px;
+  line-height: 1;
+}
+.ai-lab-collapse:hover { background: rgba(77, 150, 203, 0.34); }
+.ai-lab-content {
+  max-height: calc(100dvh - 94px);
+  overflow-y: auto;
+  padding: 12px 14px 14px;
+  touch-action: pan-y;
+  scrollbar-color: rgba(117, 176, 223, 0.42) transparent;
+}
+#ai-astro-lab.collapsed .ai-lab-content { display: none; }
+#ai-astro-lab.collapsed .ai-lab-header { border-bottom: 0; }
+.ai-lab-intro,
+.ai-lab-planet-label,
+.ai-lab-slider,
+.ai-lab-metric-heading,
+.ai-lab-twin,
+.ai-lab-diagnostic,
+.ai-lab-caveat {
+  font-size: 11px;
+  line-height: 1.5;
+}
+.ai-lab-intro { margin-bottom: 10px; color: rgba(211, 228, 245, 0.72); }
+.ai-lab-planet-label { display: block; margin-bottom: 4px; color: #a8c9e7; }
+.ai-lab-select {
+  width: 100%;
+  min-height: 34px;
+  padding: 6px 9px;
+  border: 1px solid rgba(119, 170, 213, 0.3);
+  border-radius: 7px;
+  background: rgba(9, 20, 36, 0.94);
+  color: #e4f1ff;
+  font: inherit;
+  font-size: 12px;
+}
+.ai-lab-select option { background: #101c2c; }
+.ai-lab-controls { display: grid; gap: 9px; margin-top: 12px; }
+.ai-lab-slider { display: block; color: #bdd2e7; }
+.ai-lab-slider > span { display: flex; justify-content: space-between; gap: 8px; }
+.ai-lab-slider output { color: #85d9f3; font-variant-numeric: tabular-nums; }
+.ai-lab-slider input {
+  display: block;
+  width: 100%;
+  height: 16px;
+  margin: 3px 0 0;
+  accent-color: #51c7dc;
+  cursor: pointer;
+}
+.ai-lab-reset {
+  width: 100%;
+  min-height: 34px;
+  margin-top: 10px;
+  border: 1px solid rgba(91, 199, 215, 0.34);
+  border-radius: 8px;
+  background: rgba(38, 129, 149, 0.2);
+  color: #bcf2fa;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  touch-action: manipulation;
+}
+.ai-lab-reset:hover { background: rgba(38, 153, 171, 0.32); }
+.ai-lab-physics-toggles {
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 8px 9px;
+  border: 1px solid rgba(119, 170, 213, 0.18);
+  border-radius: 8px;
+  color: #b6cbe0;
+  font: inherit;
+}
+.ai-lab-physics-toggles legend {
+  padding: 0 4px;
+  color: #8ca9c4;
+  font-size: 9px;
+  letter-spacing: 0.6px;
+}
+.ai-lab-physics-toggles label {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: #c3d6e8;
+  font-size: 10px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+.ai-lab-physics-toggles input {
+  flex: 0 0 auto;
+  margin-top: 1px;
+  accent-color: #34d399;
+}
+.ai-lab-results {
+  display: grid;
+  gap: 9px;
+  margin-top: 12px;
+  padding: 11px;
+  border: 1px solid rgba(119, 170, 213, 0.16);
+  border-radius: 10px;
+  background: rgba(6, 13, 25, 0.62);
+}
+.ai-lab-temperature > span {
+  display: block;
+  color: #8ca9c4;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+}
+.ai-lab-temperature strong {
+  display: block;
+  margin-top: 1px;
+  color: #fbfdff;
+  font-size: 27px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.ai-lab-temperature small { color: #9dcce2; font-size: 13px; font-weight: 500; }
+.ai-lab-metric-heading { display: flex; justify-content: space-between; gap: 8px; color: #b6cbe0; }
+.ai-lab-metric-heading strong { color: #e9f8ff; font-variant-numeric: tabular-nums; }
+.ai-lab-bar {
+  height: 5px;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: rgba(129, 160, 188, 0.18);
+}
+.ai-lab-bar > span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #39bfa7, #8ee6b7);
+  transition: width 420ms ease;
+}
+.ai-lab-bar-esi > span { background: linear-gradient(90deg, #439de6, #a5e3ff); }
+.ai-lab-classification {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #e6f4ff;
+  font-size: 12px;
+}
+#ai-lab-classification-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #90b8cc;
+  box-shadow: 0 0 10px currentColor;
+}
+#ai-lab-classification-dot[data-classification="optimal-biosphere"] { background: #69e2aa; }
+#ai-lab-classification-dot[data-classification="runaway-greenhouse"] { background: #ff886d; }
+#ai-lab-classification-dot[data-classification="cryogenic-world"] { background: #77c8ff; }
+.ai-lab-twin { color: #9eb8d0; }
+.ai-lab-twin strong { color: #bde8ff; font-weight: 650; }
+.ai-lab-diagnostic { color: #c3d3e2; }
+.ai-lab-caveat {
+  margin: 9px 2px 0;
+  color: rgba(175, 194, 212, 0.62);
+  font-size: 9px;
+}
+body.cinematic #ai-astro-lab { display: none !important; }
+@media (max-width: 768px) {
+  #ai-astro-lab {
+    right: 8px;
+    bottom: 76px;
+    width: min(340px, calc(100vw - 16px));
+    max-height: min(72dvh, 680px);
+  }
+  .ai-lab-content { max-height: calc(72dvh - 72px); }
+}

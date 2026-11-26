@@ -285,6 +285,8 @@ export function createPlanetMaterial({
     uNaturalTintMix: { value: BODY_GRADE[bodyId]?.tintMix ?? 0 },
     uVeil: { value: BODY_GRADE[bodyId]?.veil ?? 0.0 },
     uVeilColor: { value: new THREE.Vector3(...(BODY_GRADE[bodyId]?.veilColor ?? [0, 0, 0])) },
+    uTerraformTintColor: { value: new THREE.Color(0x000000) },
+    uTerraformTintStrength: { value: 0 },
     // EnglishEnglish：EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglish，EnglishEnglishEnglishEnglish），EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish
     uEclOn: { value: 0 },
     uEclPos: { value: new THREE.Vector3() },
@@ -356,6 +358,8 @@ export function createPlanetMaterial({
       uniform float uNaturalTintMix;
       uniform float uVeil;
       uniform vec3 uVeilColor;
+      uniform vec3 uTerraformTintColor;
+      uniform float uTerraformTintStrength;
       uniform int uEclOn;
       uniform vec3 uEclPos;
       uniform float uEclR;
@@ -679,6 +683,7 @@ ${CLOUD_GLSL}
           float spec = pow(max(dot(n, h), 0.0), 340.0);
           col += vec3(1.0, 0.97, 0.9) * spec * oceanMask * uSunI * max(ndl, 0.0) * 1.1;
         }
+        col += uTerraformTintColor * uTerraformTintStrength;
         gl_FragColor = vec4(col, 1.0);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>

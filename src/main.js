@@ -56,6 +56,62 @@ import { createApolloLandmarks, createRoverSites } from './scene/landmarks.js';
 import { createEphemerisLoader } from './engine/ephemerisLoader.js';
 import { createCameraFeel } from './engine/cameraFeel.js';
 import { bootstrapRenderer } from './engine/rendererBootstrap.js';
+import { mountAstrobiologyLab } from './ui/astroLab.js';
+import { createTerraformingOverlays } from './scene/terraformingOverlays.js';
+
+let builder = null;
+let terraformingOverlays = null;
+let terraformOverlayState = {
+  showHabitableZone: false,
+  showLightPulse: false,
+  targetPlanetId: 'earth',
+};
+const pendingPlanetAtmosphereVisuals = new Map();
+/**
+ * @param {string} planetName
+ * @param {{ pressureAtm: number, co2Pct: number, o2Pct: number, predictedTempK: number, isReset?: boolean }} params
+ * @returns {boolean}
+ */
+window.setPlanetAtmosphereVisual = (planetName, params = {}) => {
+  const key = String(planetName).trim().toLowerCase();
+  if (!params || typeof params !== 'object') {
+    throw new TypeError('Planet atmosphere visual parameters must be an object');
+  }
+  if (
+    !params.isReset &&
+    (!Number.isFinite(params.pressureAtm) ||
+      !Number.isFinite(params.co2Pct) ||
+    !Number.isFinite(params.o2Pct) ||
+    !Number.isFinite(params.predictedTempK))
+  ) {
+    throw new TypeError('Atmosphere pressure, CO₂, O₂, and predicted temperature must be finite numbers');
+  }
+  if (builder) return builder.setPlanetAtmosphereVisual(key, params);
+  pendingPlanetAtmosphereVisuals.set(key, { ...params });
+  return true;
+};
+window.addEventListener('terraform-atmosphere-update', event => {
+  const detail = event.detail;
+  if (!detail || typeof detail !== 'object' || typeof detail.planetName !== 'string') {
+    throw new TypeError('terraform-atmosphere-update requires a planetName and visual parameters');
+  }
+  const { planetName, ...params } = detail;
+  window.setPlanetAtmosphereVisual(planetName, params);
+});
+window.addEventListener('terraform-physics-overlays-change', event => {
+  const detail = event.detail;
+  if (!detail || typeof detail !== 'object') {
+    throw new TypeError('terraform-physics-overlays-change requires overlay state');
+  }
+  terraformOverlayState = {
+    showHabitableZone: !!detail.showHabitableZone,
+    showLightPulse: !!detail.showLightPulse,
+    targetPlanetId: String(detail.targetPlanetId ?? 'earth').toLowerCase(),
+  };
+  terraformingOverlays?.setState(terraformOverlayState);
+});
+
+mountAstrobiologyLab();
 
 const renderBoot = await bootstrapRenderer({
   canvas: document.getElementById('app'), create: options => new THREE.WebGLRenderer(options),
@@ -225,7 +281,7 @@ const orbitCam = new OrbitCamera(camera);
 const simClock = new SimClock();
 const clock = new THREE.Clock();
 
-let builder, comets, labels, searchUI, touchControls, sky, belts, oortCloud, tnoScene, smallBodies;
+let comets, labels, searchUI, touchControls, sky, belts, oortCloud, tnoScene, smallBodies;
 let appMode = 'orbit'; // orbit | fly | walk
 const registry = new Map();
 let selectedId = null;
@@ -250,6 +306,16 @@ init();
 async function init() {
   applyDomI18n();
   builder = await buildSolarSystem(scene, world, (d, total) => hud.setLoading(d, total), (d, total) => hud.setBgLoading(d, total));
+  for (const [planetName, params] of pendingPlanetAtmosphereVisuals) {
+    builder.setPlanetAtmosphereVisual(planetName, params);
+  }
+  pendingPlanetAtmosphereVisuals.clear();
+  terraformingOverlays = createTerraformingOverlays(
+    scene,
+    builder.sunEntry.group,
+    builder.bodies,
+  );
+  terraformingOverlays.setState(terraformOverlayState);
 
   sky = createStarfield(builder.cache.get('milkyway.jpg'));
   scene.add(sky.group); // EnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglish）
@@ -970,6 +1036,7 @@ function loop() {
       console.error('[postWorldUpdate]', e);
     }
   }
+  terraformingOverlays?.update(performance.now() / 1000);
   // ── EnglishEnglish / EnglishEnglishEnglishEnglish ──────────────────────────────────────────────────────
   // EnglishEnglishEnglishEnglishEnglishEnglishEnglish"EnglishEnglishEnglishEnglish"EnglishEnglishEnglish：EnglishEnglish=EnglishEnglishEnglish，EnglishEnglish=English（EnglishEnglishEnglishEnglishEnglishEnglish）。
   // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish +Z EnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish）。
