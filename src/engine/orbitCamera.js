@@ -95,6 +95,34 @@ export class OrbitCamera {
     this.lon = Math.atan2(-_v1.z, _v1.x);
   }
 
+  setDistanceTarget(distanceKm, env) {
+    if (!Number.isFinite(distanceKm) || distanceKm <= 0) {
+      throw new RangeError('Camera distance must be a positive finite number');
+    }
+    const targetId = this.transition?.toId ?? this.focusId;
+    const focus = env.get(targetId);
+    const distance = THREE.MathUtils.clamp(distanceKm, this.minDist(focus), MAX_DIST);
+    if (this.transition) {
+      this.transition.targetDist = distance;
+      return distance;
+    }
+    this.distTarget = distance;
+    this._dolly = 1;
+    this._dollyDepth = null;
+    this._dollyTargetId = null;
+    this._radialGesture = true;
+    this._streakIdle = 0;
+    return distance;
+  }
+
+  zoomByFactor(factor, env) {
+    if (!Number.isFinite(factor) || factor <= 0) {
+      throw new RangeError('Camera zoom factor must be a positive finite number');
+    }
+    const distance = this.transition?.targetDist ?? this.distTarget;
+    return this.setDistanceTarget(distance * factor, env);
+  }
+
   /**
    * EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglish/EnglishEnglishEnglishEnglishEnglishEnglishEnglish）。
    * quat EnglishEnglishEnglishEnglishEnglish heading/tilt，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（R7 #1/#7 EnglishEnglishEnglishEnglish）。
@@ -392,17 +420,25 @@ export class OrbitCamera {
   }
 
   /** GE EnglishEnglishEnglishEnglishEnglishEnglishEnglish（fromIdOverride EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglish） */
-  flyTo(env, toId, fromIdOverride = null) {
+  flyTo(env, toId, fromIdOverride = null, arrivalDistanceOverride = null) {
     this.pendingFocusId = null;
     this.pendingTargetLocal = null;
     this.transition = null;
     const to = env.get(toId);
     const from = env.get(fromIdOverride ?? this.focusId);
+    if (
+      arrivalDistanceOverride !== null &&
+      (!Number.isFinite(arrivalDistanceOverride) || arrivalDistanceOverride <= 0)
+    ) {
+      throw new RangeError('Camera arrival distance must be a positive finite number');
+    }
     const sep = Math.hypot(
       to.posKm[0] - from.posKm[0], to.posKm[1] - from.posKm[1], to.posKm[2] - from.posKm[2]
     );
     const h0 = Math.max(this.dist, this.minDist(from));
-    const h1 = this.arrivalDist(env, toId);
+    const h1 = arrivalDistanceOverride === null
+      ? this.arrivalDist(env, toId)
+      : THREE.MathUtils.clamp(arrivalDistanceOverride, this.minDist(to), MAX_DIST);
     // EnglishEnglishEnglishEnglish：EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish；EnglishEnglishEnglishEnglish：EnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglish）
     _v1.set(
       this.posKm[0] - from.posKm[0], this.posKm[1] - from.posKm[1], this.posKm[2] - from.posKm[2]

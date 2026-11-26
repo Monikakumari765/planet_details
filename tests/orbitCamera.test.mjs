@@ -140,3 +140,45 @@ test('拖拽取消后，轨道参数与相机位置自洽（不跳变）', () =>
   assert.ok(moved < cam.dist * 0.5, `取消过渡不应造成位置跳变，实际位移 ${moved} km`);
   assert.ok(cam.dist > 0 && Number.isFinite(cam.dist));
 });
+
+test('按钮缩放平滑调整焦点距离并遵守距离边界', () => {
+  const { env, cam } = setup();
+  const start = cam.dist;
+
+  cam.zoomByFactor(0.72, env);
+  assert.ok(cam.distTarget < start);
+  assert.ok(cam.distTarget >= cam.minDist(env.get('earth')));
+  run(cam, env, makeInput(), 20);
+  assert.ok(cam.dist < start, '缩放应通过现有更新循环平滑生效');
+
+  cam.setDistanceTarget(1e20, env);
+  assert.equal(cam.distTarget, 1.5e13, '缩小量不应超过相机最大范围');
+  cam.setDistanceTarget(1, env);
+  assert.equal(cam.distTarget, cam.minDist(env.get('earth')), '缩放不应穿过焦点天体表面');
+});
+
+test('过渡中的按钮缩放更新目标距离而不中断焦点过渡', () => {
+  const { env, cam } = setup();
+  cam.setPendingFocus('mars');
+  run(cam, env, makeInput(), 2);
+  const start = cam.transition.targetDist;
+
+  cam.zoomByFactor(1.4, env);
+
+  assert.ok(cam.transition.targetDist > start);
+  assert.equal(cam.focusId, 'earth');
+});
+
+test('飞行可指定概览到达距离并限制在相机边界内', () => {
+  const { env, cam } = setup();
+  cam.flyTo(env, 'mars', null, 2e13);
+  assert.equal(cam.flight.h1, 1.5e13);
+
+  cam.flight.start = performance.now() - 1000;
+  cam.flight.dur = 1;
+  cam.updateFlight(0, env);
+  assert.equal(cam.focusId, 'mars');
+  assert.ok(Math.abs(cam.dist - 1.5e13) < 0.01, '飞行结束时应保留指定的概览距离');
+
+  assert.throws(() => cam.flyTo(env, 'mars', null, 0), /arrival distance/i);
+});
