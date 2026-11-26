@@ -1811,6 +1811,8 @@ body.walk-mode::after {
 body.cinematic #ai-astro-lab { display: none !important; }
 
 /* Keep the observatory theme and mobile sheet rules after component defaults. */
+#mobile-bodies-toggle { display: none; }
+
 #ai-astro-lab .ai-lab-panel {
   border: var(--obsidian-border);
   background: var(--obsidian-glass);
@@ -1957,30 +1959,135 @@ body.cinematic #ai-astro-lab { display: none !important; }
   .touch #hud-nav { max-height: 54px; }
   .touch #hud-nav.expanded { max-height: min(45dvh, 360px); }
 
-  #ai-astro-lab {
-    left: 8px;
+  #mobile-bodies-toggle {
+    position: fixed;
+    z-index: 35;
+    top: 50px;
     right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(168px, 46vw);
+    min-height: 36px;
+    padding: 0 8px;
+    border: var(--obsidian-border);
+    border-radius: 9px;
+    background: var(--obsidian-glass);
+    box-shadow: var(--obsidian-shadow);
+    backdrop-filter: var(--obsidian-blur);
+    -webkit-backdrop-filter: var(--obsidian-blur);
+    color: var(--obsidian-text);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 650;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .touch #tc-menu-btn { display: none; }
+
+  #directory {
+    position: fixed;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 33;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 52dvh;
+    max-height: 52dvh;
+    border-radius: 18px 18px 0 0;
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    transform: translateY(110%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  #directory.open { transform: translateY(0); }
+
+  #directory .dir-head {
+    border-radius: 18px 18px 0 0;
+    padding-top: 12px;
+    text-align: center;
+  }
+
+  #directory .dir-head::before {
+    display: block;
+    width: 36px;
+    height: 4px;
+    margin: 0 auto 8px;
+    border-radius: 2px;
+    background: rgba(56, 189, 248, 0.48);
+    content: '';
+  }
+
+  #dir-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+    max-height: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #ai-astro-lab {
+    left: 10px;
+    right: 10px;
     bottom: 10px;
     width: auto;
-    max-height: 52vh;
-    max-height: 52dvh;
-    overflow-y: auto;
+    max-width: calc(100vw - 20px);
+    height: auto;
+    max-height: 44px;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  #ai-astro-lab *,
+  #user-observer,
+  #user-observer * {
+    box-sizing: border-box;
+    min-width: 0;
   }
 
   #ai-astro-lab .ai-lab-panel {
+    width: 100%;
     max-height: inherit;
+    overflow: hidden;
   }
 
   #ai-astro-lab .ai-lab-header {
-    min-height: 52px;
-    padding: 8px 11px;
+    min-height: 44px;
+    height: 44px;
+    gap: 8px;
+    padding: 4px 10px;
   }
 
   #ai-astro-lab.collapsed {
-    left: 8px;
-    right: auto;
-    bottom: calc(72px + env(safe-area-inset-bottom));
-    width: min(220px, calc(100vw - 16px));
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    width: auto;
+    height: 44px;
+    max-height: 44px;
+  }
+
+  #ai-astro-lab:not(.collapsed) {
+    max-height: 46vh;
+    max-height: 46dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  #ai-astro-lab .ai-lab-content {
+    width: 100%;
+    max-height: calc(46vh - 44px);
+    max-height: calc(46dvh - 44px);
+    overflow-wrap: anywhere;
+    overscroll-behavior: contain;
   }
 
   #ai-astro-lab.collapsed .ai-lab-header > div { line-height: 1.2; }
@@ -1991,10 +2098,14 @@ body.cinematic #ai-astro-lab { display: none !important; }
     line-height: 1.2;
   }
 
-  .ai-lab-content {
-    max-height: calc(52vh - 60px);
-    max-height: calc(52dvh - 60px);
-    overscroll-behavior: contain;
+  #ai-astro-lab .ai-lab-results,
+  #ai-astro-lab .ai-lab-audio,
+  #ai-astro-lab .ai-lab-physics-toggles,
+  #ai-astro-lab input,
+  #ai-astro-lab select,
+  #ai-astro-lab input[type="range"] {
+    max-width: 100%;
+    min-width: 0;
   }
 
   .ai-lab-collapse {
@@ -2035,4 +2146,52 @@ body.cinematic #ai-astro-lab { display: none !important; }
     visibility: hidden;
     pointer-events: none;
   }
+
+  #user-observer {
+    left: 10px;
+    right: 10px;
+    width: auto;
+    max-width: calc(100vw - 20px);
+  }
+
+  #user-observer.expanded,
+  .touch #user-observer.expanded {
+    left: 10px;
+    right: 10px;
+    width: auto;
+  }
+
+  #user-observer .observer-panel {
+    width: 100%;
+    max-width: 100%;
+    max-height: 46vh;
+    max-height: 46dvh;
+    overflow-x: hidden;
+  }
+
+  #user-observer .observer-actions {
+    min-width: 0;
+  }
+
+  #user-observer .observer-action {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  #user-observer .observer-manual > label {
+    grid-template-columns: minmax(0, 72px) minmax(0, 1fr);
+  }
+
+  #user-observer .observer-readouts > div {
+    flex-wrap: wrap;
+    gap: 0 6px;
+  }
+
+  #user-observer .observer-readouts span,
+  #user-observer .observer-readouts strong {
+    overflow-wrap: anywhere;
+  }
+
+  #camera-controls { top: 96px; }
 }

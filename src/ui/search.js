@@ -106,6 +106,9 @@ export class SearchUI {
     head.addEventListener('click', () => {
       if (document.documentElement.classList.contains('touch')) return;
       panel.classList.toggle('open');
+      window.dispatchEvent(new CustomEvent('mobile-drawer-change', {
+        detail: { drawer: 'directory', open: panel.classList.contains('open') },
+      }));
     });
 
     const PLANET_GROUP = t('grp.planet');

@@ -231,23 +231,7 @@ export class TouchControls {
       this._updateDrawerBtnState();
     });
 
-    // ☰ EnglishEnglishEnglishEnglishEnglishEnglish
-    menuBtn.addEventListener('click', () => {
-      const dir = document.getElementById('directory');
-      if (!dir) return;
-      this._dirOpen = !this._dirOpen;
-      dir.classList.toggle('open', this._dirOpen);
-      if (this._dirOpen) {
-        if (this._tgtOpen) {
-          this._tgtOpen = false;
-          document.getElementById('hud-target')?.classList.remove('tc-open');
-        }
-        this._timeOpen = false;
-        if (this._timePanelEl) this._timePanelEl.hidden = true;
-      }
-      this._updateBackdrop();
-      this._updateDrawerBtnState();
-    });
+    menuBtn.addEventListener('click', () => this.toggleDirectory());
   }
 
   _buildJoystick(root) {
@@ -366,6 +350,7 @@ export class TouchControls {
   _updateDrawerBtnState() {
     document.getElementById('tc-tgt-btn')?.classList.toggle('active', this._tgtOpen);
     document.getElementById('tc-menu-btn')?.classList.toggle('active', this._dirOpen);
+    document.getElementById('mobile-bodies-toggle')?.setAttribute('aria-expanded', String(this._dirOpen));
   }
 
   _buildBackdrop() {
@@ -400,6 +385,44 @@ export class TouchControls {
   /** EnglishEnglishEnglishEnglish：EnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish） */
   closeDirectory() {
     if (this._dirOpen) this._closeDrawers();
+  }
+
+  toggleDirectory() {
+    this.setDirectoryOpen(!this._dirOpen);
+    if (this._dirOpen) {
+      window.dispatchEvent(new CustomEvent('mobile-drawer-change', {
+        detail: { drawer: 'directory', open: true },
+      }));
+    }
+  }
+
+  setDirectoryOpen(open) {
+    const dir = document.getElementById('directory');
+    if (!dir) return;
+    this._dirOpen = Boolean(open);
+    dir.classList.toggle('open', this._dirOpen);
+    if (this._dirOpen) this.closeNonDirectoryDrawers();
+    this._updateBackdrop();
+    this._updateDrawerBtnState();
+  }
+
+  closeNonDirectoryDrawers() {
+    if (this._tgtOpen) {
+      this._tgtOpen = false;
+      document.getElementById('hud-target')?.classList.remove('tc-open');
+    }
+    if (this._timeOpen) {
+      this._timeOpen = false;
+      if (this._timePanelEl) this._timePanelEl.hidden = true;
+      const chevron = document.getElementById('tc-time-chevron');
+      if (chevron) chevron.textContent = '▶';
+    }
+    this._updateBackdrop();
+    this._updateDrawerBtnState();
+  }
+
+  closeAllDrawers() {
+    if (this._dirOpen || this._tgtOpen || this._timeOpen) this._closeDrawers();
   }
 
   _updateBackdrop() {

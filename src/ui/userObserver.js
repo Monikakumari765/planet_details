@@ -81,6 +81,11 @@ export function mountUserObserver({ onLocationChange, onFlyToLocation } = {}) {
     root.classList.toggle('expanded', expanded);
     document.documentElement.classList.toggle('observer-open', expanded);
     toggleButton.setAttribute('aria-expanded', String(expanded));
+    if (expanded) {
+      window.dispatchEvent(new CustomEvent('mobile-drawer-change', {
+        detail: { drawer: 'observer', open: true },
+      }));
+    }
   }
 
   function showStatus(message, isError = false) {
@@ -178,6 +183,9 @@ export function mountUserObserver({ onLocationChange, onFlyToLocation } = {}) {
   });
 
   return {
+    collapse() {
+      setExpanded(false);
+    },
     setTargetPlanet(id) {
       if (!PLANETS.includes(id)) return;
       targetPlanet = id;

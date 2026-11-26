@@ -1,13 +1,11 @@
 {
-  "name": "Solar Wanderer · 遨游太阳系",
-  "short_name": "Solar Wanderer",
+  "name": "Solar System Observatory",
+  "short_name": "SolarObs",
   "description": "A 1:1 real-time solar system explorer powered by NASA JPL ephemerides, running entirely in your browser.",
-  "id": "./",
-  "start_url": "./",
-  "scope": "./",
-  "display": "fullscreen",
-  "background_color": "#05070f",
-  "theme_color": "#05070f",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#03060f",
+  "theme_color": "#03060f",
   "orientation": "any",
   "icons": [
     {

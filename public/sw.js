@@ -12,7 +12,7 @@
 //
 // 不做的事：不缓存 Range 请求、不缓存非 200 响应、不缓存 manifest（它必须新鲜）。
 
-const VERSION = 'sw-v1';
+const VERSION = 'sw-v2';
 const SHELL = `${VERSION}-shell`;
 const ASSETS = `${VERSION}-assets`;
 // 条目上限：全站可缓存文件实测 2817 个（650 星历分片 + 2047 DEM 瓦片 + 111 贴图）。
@@ -49,6 +49,14 @@ self.addEventListener('fetch', (e) => {
   if (url.origin !== self.location.origin) return;   // 跨源不介入
   if (req.headers.has('range')) return;              // Range 请求交给网络
 
+  // Manifests must always reach the network; never replay a stale cached 404.
+  if (url.pathname.endsWith('/manifest.json')) {
+    e.respondWith(fetch(req).catch(() =>
+      new Response('', { status: 504, statusText: 'Manifest unavailable offline' })
+    ));
+    return;
+  }
+
   // HTML 导航：网络优先，离线回退缓存
   if (req.mode === 'navigate') {
     e.respondWith((async () => {
@@ -73,7 +81,8 @@ self.addEventListener('fetch', (e) => {
     if (hit) return hit;
     try {
       const res = await fetch(req);
-      if (res && res.ok && res.type === 'basic') {
+      if (!res.ok) return res;
+      if (res.type === 'basic') {
         const c = await caches.open(ASSETS);
         c.put(req, res.clone()).then(() => trimCache(ASSETS, MAX_ASSETS)).catch(() => {});
       }

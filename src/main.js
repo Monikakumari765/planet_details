@@ -75,6 +75,8 @@ let sky = null;
 let cosmicMotion = null;
 let observerBeacon = null;
 let observerUi = null;
+let astroLabUi = null;
+let touchControls = null;
 let observerFocusTween = null;
 let universeMotionEnabled = true;
 const cosmicAudio = new CosmicAudio();
@@ -161,7 +163,34 @@ window.addEventListener('cosmic-audio-volume-change', event => {
   cosmicAudio.setVolume(volume);
 });
 
-mountAstrobiologyLab();
+window.addEventListener('mobile-drawer-change', event => {
+  if (!window.matchMedia('(max-width: 768px)').matches) return;
+  const { drawer, open } = event.detail ?? {};
+  const closeDirectory = () => {
+    if (touchControls) touchControls.setDirectoryOpen(false);
+    else document.getElementById('directory')?.classList.remove('open');
+    document.getElementById('mobile-bodies-toggle')?.setAttribute('aria-expanded', 'false');
+  };
+  if (drawer === 'directory') {
+    document.getElementById('mobile-bodies-toggle')?.setAttribute('aria-expanded', String(!!open));
+    touchControls?.setDirectoryOpen(!!open);
+    if (open) {
+      touchControls?.closeNonDirectoryDrawers();
+      astroLabUi?.collapse();
+      observerUi?.collapse();
+    }
+  } else if (open && drawer === 'ai-lab') {
+    touchControls?.closeAllDrawers();
+    closeDirectory();
+    observerUi?.collapse();
+  } else if (open && drawer === 'observer') {
+    touchControls?.closeAllDrawers();
+    closeDirectory();
+    astroLabUi?.collapse();
+  }
+});
+
+astroLabUi = mountAstrobiologyLab();
 
 const renderBoot = await bootstrapRenderer({
   canvas: document.getElementById('app'), create: options => new THREE.WebGLRenderer(options),
@@ -331,7 +360,7 @@ const orbitCam = new OrbitCamera(camera);
 const simClock = new SimClock();
 const clock = new THREE.Clock();
 
-let comets, labels, searchUI, touchControls, belts, oortCloud, tnoScene, smallBodies;
+let comets, labels, searchUI, belts, oortCloud, tnoScene, smallBodies;
 let appMode = 'orbit'; // orbit | fly | walk
 const registry = new Map();
 let selectedId = null;
@@ -507,6 +536,21 @@ async function init() {
       warpDown:       () => hud.warpDown(),
     });
   }
+  const mobileBodiesToggle = document.getElementById('mobile-bodies-toggle');
+  mobileBodiesToggle?.addEventListener('click', () => {
+    if (touchControls) {
+      touchControls.toggleDirectory();
+      return;
+    }
+    const directory = document.getElementById('directory');
+    if (!directory) return;
+    const open = !directory.classList.contains('open');
+    directory.classList.toggle('open', open);
+    mobileBodiesToggle.setAttribute('aria-expanded', String(open));
+    window.dispatchEvent(new CustomEvent('mobile-drawer-change', {
+      detail: { drawer: 'directory', open },
+    }));
+  });
 
   setupTerrainMgr();
 

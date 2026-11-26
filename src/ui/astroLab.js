@@ -132,6 +132,11 @@ export function mountAstrobiologyLab() {
       collapsed ? 'Expand habitability lab' : 'Collapse habitability lab',
     );
     collapseButton.textContent = collapsed ? '+' : '−';
+    if (!collapsed) {
+      window.dispatchEvent(new CustomEvent('mobile-drawer-change', {
+        detail: { drawer: 'ai-lab', open: true },
+      }));
+    }
   };
   if (window.matchMedia('(max-width: 768px)').matches) setCollapsed(true);
   const sliders = [orbitSlider, pressureSlider, co2Slider, oxygenSlider];
@@ -289,4 +294,9 @@ export function mountAstrobiologyLab() {
   resetControls();
   updatePhysicsOverlays();
   updateUniverseMotion();
+  return {
+    collapse() {
+      setCollapsed(true);
+    },
+  };
 }

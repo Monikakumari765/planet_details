@@ -248,7 +248,7 @@ const D = {
   'help.toggle': { zh: '操作说明（H 关闭）', en: 'Controls (H to close)', es: 'Controles (H para cerrar)', ja: '操作説明（H で閉じる）', fr: 'Contrôles (H pour fermer)', de: 'Steuerung (H zum Schließen)', ru: 'Управление (H для закрытия)' },
 
   // ── 触摸操作面板 ─────────────────────────────────────────────────────
-  'tc.menu':      { zh: '☰', en: '☰', es: '☰', ja: '☰', fr: '☰', de: '☰', ru: '☰' },
+  'tc.menu':      { zh: '☰ 天体', en: '☰ Bodies', es: '☰ Cuerpos', ja: '☰ 天体', fr: '☰ Corps', de: '☰ Körper', ru: '☰ Тела' },
   'tc.zoomIn':    { zh: '＋', en: '＋', es: '＋', ja: '＋', fr: '＋', de: '＋', ru: '＋' },
   'tc.zoomOut':   { zh: '－', en: '－', es: '－', ja: '－', fr: '－', de: '－', ru: '－' },
   'tc.dir':       { zh: '🎯', en: '🎯', es: '🎯', ja: '🎯', fr: '🎯', de: '🎯', ru: '🎯' },
