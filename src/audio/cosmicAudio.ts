@@ -8,8 +8,8 @@ const MIN_DISTANCE_RADII = 1.2;
 const MAX_DISTANCE_RADII = 20;
 const ARPEGGIO_HZ = [220, 329.63, 440, 493.88, 523.25, 493.88, 440, 329.63];
 const DRONE_VOICINGS = [
-  { frequency: 55, gain: 0.048 },
-  { frequency: 82.4069, gain: 0.036 },
+  { frequency: 55, gain: 0.12 },
+  { frequency: 82.4069, gain: 0.09 },
 ];
 const ARPEGGIO_INTERVAL_MS = 650;
 const DRONE_BREATH_SECONDS = 16;
@@ -43,7 +43,7 @@ export class CosmicAudio {
   private arpeggioTimer: number | null = null;
   private breathingTimer: number | null = null;
   private enabled = false;
-  private volume = 0.45;
+  private volume = 0.8;
   private arpeggioIndex = 0;
 
   get isEnabled(): boolean {
@@ -255,7 +255,7 @@ export class CosmicAudio {
     for (const type of ['sine', 'triangle'] as const) {
       const oscillator = context.createOscillator();
       const envelope = context.createGain();
-      const peak = type === 'sine' ? 0.012 : 0.0035;
+      const peak = type === 'sine' ? 0.04 : 0.012;
       oscillator.type = type;
       oscillator.frequency.value = frequency;
       envelope.gain.setValueAtTime(0.0001, now);

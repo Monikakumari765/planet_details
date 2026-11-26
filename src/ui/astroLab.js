@@ -68,8 +68,8 @@ function mountMarkup(root) {
         <section class="ai-lab-audio" aria-label="Cosmic ambient audio">
           <button id="ai-lab-cosmic-audio" type="button" aria-pressed="false">Cosmic Audio: OFF</button>
           <label class="ai-lab-slider">
-            <span>Ambient volume <output id="ai-lab-cosmic-volume-value">45%</output></span>
-            <input id="ai-lab-cosmic-volume" type="range" min="0" max="100" step="1" value="45" aria-label="Cosmic ambient audio volume">
+            <span>Ambient volume <output id="ai-lab-cosmic-volume-value">80%</output></span>
+            <input id="ai-lab-cosmic-volume" type="range" min="0" max="100" step="1" value="80" aria-label="Cosmic ambient audio volume">
           </label>
           <p id="ai-lab-cosmic-audio-status" role="status" aria-live="polite">
             Audio starts only after you turn it on. Optional MP3: /audio/interstellar-theme.mp3.
