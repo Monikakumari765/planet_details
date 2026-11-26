@@ -134,8 +134,8 @@ export class Compass {
     // ── EnglishEnglishEnglishEnglish ──
     const bg = document.createElementNS(SVG_NS, 'circle');
     bg.setAttribute('cx', '0'); bg.setAttribute('cy', '0'); bg.setAttribute('r', String(R + 4));
-    bg.setAttribute('fill', 'rgba(8,16,28,0.55)');
-    bg.setAttribute('stroke', 'rgba(110,160,210,0.28)');
+    bg.setAttribute('fill', 'rgba(3,6,15,0.86)');
+    bg.setAttribute('stroke', 'rgba(56,189,248,0.22)');
     bg.setAttribute('stroke-width', '1');
     svg.appendChild(bg);
 
@@ -143,7 +143,7 @@ export class Compass {
     const inner = document.createElementNS(SVG_NS, 'circle');
     inner.setAttribute('cx', '0'); inner.setAttribute('cy', '0'); inner.setAttribute('r', String(R * 0.5));
     inner.setAttribute('fill', 'none');
-    inner.setAttribute('stroke', 'rgba(110,160,210,0.12)');
+    inner.setAttribute('stroke', 'rgba(56,189,248,0.16)');
     inner.setAttribute('stroke-width', '0.5');
     svg.appendChild(inner);
 
@@ -152,7 +152,7 @@ export class Compass {
       const line = document.createElementNS(SVG_NS, 'line');
       line.setAttribute('x1', String(x1)); line.setAttribute('y1', String(y1));
       line.setAttribute('x2', String(x2)); line.setAttribute('y2', String(y2));
-      line.setAttribute('stroke', 'rgba(110,160,210,0.1)');
+      line.setAttribute('stroke', 'rgba(56,189,248,0.12)');
       line.setAttribute('stroke-width', '0.5');
       svg.appendChild(line);
     }
@@ -168,7 +168,7 @@ export class Compass {
       text.setAttribute('dominant-baseline', 'central');
       text.setAttribute('font-size', '10');
       text.setAttribute('font-weight', 'bold');
-      text.setAttribute('fill', key === 'north' ? 'rgba(255,233,176,0.9)' : 'rgba(160,190,220,0.6)');
+      text.setAttribute('fill', key === 'north' ? '#38bdf8' : '#94a3b8');
       text.setAttribute('opacity', '0');
       text.textContent = tt('compass.' + key);
       svg.appendChild(text);
@@ -187,7 +187,7 @@ export class Compass {
     // ── EnglishEnglish（EnglishEnglishEnglishEnglish）──
     const center = document.createElementNS(SVG_NS, 'circle');
     center.setAttribute('cx', '0'); center.setAttribute('cy', '0'); center.setAttribute('r', '1.5');
-    center.setAttribute('fill', 'rgba(160,200,240,0.5)');
+    center.setAttribute('fill', 'rgba(56,189,248,0.65)');
     svg.appendChild(center);
 
     // ── EnglishEnglishEnglishEnglish ──
@@ -196,7 +196,7 @@ export class Compass {
     this._modeLabel.setAttribute('y', String(R + 16));
     this._modeLabel.setAttribute('text-anchor', 'middle');
     this._modeLabel.setAttribute('font-size', '8');
-    this._modeLabel.setAttribute('fill', 'rgba(160,190,220,0.5)');
+    this._modeLabel.setAttribute('fill', '#94a3b8');
     svg.appendChild(this._modeLabel);
 
     this.root.appendChild(svg);

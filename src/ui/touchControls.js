@@ -403,6 +403,10 @@ export class TouchControls {
   }
 
   _updateBackdrop() {
+    document.documentElement.classList.toggle(
+      'tc-drawer-open',
+      this._dirOpen || this._tgtOpen,
+    );
     if (this.backdrop) {
       this.backdrop.classList.toggle('visible', this._dirOpen || this._tgtOpen);
     }

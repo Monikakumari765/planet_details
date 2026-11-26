@@ -176,16 +176,17 @@ export class ScaleReference {
     el.style.cssText = [
       'position:fixed', 'top:14px', 'left:50%', 'transform:translateX(-50%)',
       'z-index:15', 'pointer-events:none',
-      'background:rgba(8,16,28,0.62)', 'border:1px solid rgba(110,160,210,0.25)',
+      'background:rgba(3,6,15,0.86)', 'border:1px solid rgba(56,189,248,0.22)',
       'border-radius:8px', 'padding:10px 16px',
-      'font-size:13px', 'line-height:1.7', 'color:#cfe3f5',
-      'backdrop-filter:blur(6px)', 'white-space:nowrap',
+      'font-size:13px', 'line-height:1.7', 'color:#f8fafc',
+      'box-shadow:0 8px 32px rgba(0,0,0,0.75)',
+      'backdrop-filter:blur(16px)', 'white-space:nowrap',
       'font-family:inherit',
     ].join(';');
 
     const fmt = (n) => n.toLocaleString();
     el.innerHTML = [
-      `<div style="font-size:14px;font-weight:bold;color:#e8f4ff;margin-bottom:4px;">${tt('scaleref.title')}</div>`,
+      `<div style="font-size:14px;font-weight:bold;color:#f8fafc;margin-bottom:4px;">${tt('scaleref.title')}</div>`,
       `<div>${tt('scaleref.earthD')}: <b>${fmt(Math.round(EARTH_RADIUS_KM * 2))}</b> km</div>`,
       `<div>${tt('scaleref.moonD')}: <b>${fmt(Math.round(MOON_RADIUS_KM * 2))}</b> km <span style="opacity:0.6">(${(MOON_RADIUS_KM / EARTH_RADIUS_KM * 100).toFixed(1)}%)</span></div>`,
       `<div>${tt('scaleref.distance')}: <b>${fmt(EARTH_MOON_DIST_KM)}</b> km <span style="opacity:0.6">(${(EARTH_MOON_DIST_KM / EARTH_RADIUS_KM).toFixed(1)} R⊕)</span></div>`,

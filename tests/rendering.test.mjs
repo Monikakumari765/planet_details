@@ -739,14 +739,18 @@ test('日食遮挡体既在地球侧设置（日食）也在月球侧设置（�
 
 // ── 批次 12：可访问性 ───────────────────────────────────────────────────────
 
-test('缩放未被禁用（WCAG 1.4.4）', () => {
+test('mobile viewport scaling and canvas gesture settings match the requested layout', () => {
   for (const f of ['index.html', 'en/index.html']) {
     const html = read(f);
     const vp = /<meta name="viewport" content="([^"]+)"/.exec(html)?.[1] ?? '';
     assert.ok(vp, `${f} 缺少 viewport`);
-    assert.ok(!/user-scalable\s*=\s*no/.test(vp), `${f} 仍禁用缩放`);
-    assert.ok(!/maximum-scale\s*=\s*1\b/.test(vp), `${f} 仍把最大缩放锁在 1`);
+    assert.match(vp, /width=device-width/);
+    assert.match(vp, /initial-scale=1\.0/);
+    assert.match(vp, /maximum-scale=1\.0/);
+    assert.match(vp, /user-scalable=no/);
   }
+  const css = read('src/style.css');
+  assert.ok(/#app\s*\{[^}]*touch-action:\s*none/s.test(css), 'canvas must keep touch gestures');
 });
 
 test('焦点样式与 aria-live 播报区存在', () => {

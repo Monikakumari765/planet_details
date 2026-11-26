@@ -124,6 +124,16 @@ export function mountAstrobiologyLab() {
   const cosmicAudioStatus = byId('ai-lab-cosmic-audio-status');
   const collapseButton = root.querySelector('.ai-lab-collapse');
   if (!collapseButton) throw new Error('Missing astrobiology lab collapse button');
+  const setCollapsed = collapsed => {
+    root.classList.toggle('collapsed', collapsed);
+    collapseButton.setAttribute('aria-expanded', String(!collapsed));
+    collapseButton.setAttribute(
+      'aria-label',
+      collapsed ? 'Expand habitability lab' : 'Collapse habitability lab',
+    );
+    collapseButton.textContent = collapsed ? '+' : '−';
+  };
+  if (window.matchMedia('(max-width: 768px)').matches) setCollapsed(true);
   const sliders = [orbitSlider, pressureSlider, co2Slider, oxygenSlider];
   let realPlanetSliderValues = null;
   let lastSelectedPlanetId = planetSelect.value;
@@ -228,13 +238,7 @@ export function mountAstrobiologyLab() {
   }
 
   collapseButton.addEventListener('click', () => {
-    const collapsed = root.classList.toggle('collapsed');
-    collapseButton.setAttribute('aria-expanded', String(!collapsed));
-    collapseButton.setAttribute(
-      'aria-label',
-      collapsed ? 'Expand habitability lab' : 'Collapse habitability lab',
-    );
-    collapseButton.textContent = collapsed ? '+' : '−';
+    setCollapsed(!root.classList.contains('collapsed'));
   });
   root.addEventListener('keydown', event => event.stopPropagation(), true);
   root.addEventListener('keyup', event => event.stopPropagation(), true);

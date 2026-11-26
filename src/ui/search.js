@@ -101,8 +101,10 @@ export class SearchUI {
 
   buildDirectory() {
     const panel = document.getElementById('directory');
+    if (window.matchMedia('(max-width: 768px)').matches) panel.classList.remove('open');
     const head = panel.querySelector('.dir-head');
     head.addEventListener('click', () => {
+      if (document.documentElement.classList.contains('touch')) return;
       panel.classList.toggle('open');
     });
 

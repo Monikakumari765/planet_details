@@ -15,6 +15,13 @@ export class HUD {
     this.root = document.getElementById('hud');
     this.elTime = document.getElementById('hud-time');
     this.elNav = document.getElementById('hud-nav');
+    this.elNav.addEventListener('click', (event) => {
+      const toggle = event.target.closest('.hud-nav-toggle');
+      if (!toggle) return;
+      const expanded = this.elNav.classList.toggle('expanded');
+      toggle.setAttribute('aria-expanded', String(expanded));
+      toggle.textContent = expanded ? '−' : '+';
+    });
     this.elTarget = document.getElementById('hud-target');
     this.elTip = document.getElementById('hud-tip');
     this.help = document.getElementById('help');
@@ -112,7 +119,10 @@ export class HUD {
     // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish DOM。EnglishEnglishEnglishEnglishEnglishEnglishEnglish，English innerHTML EnglishEnglishEnglishEnglishEnglish
     // EnglishEnglish + EnglishEnglish + EnglishEnglish——EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish UI EnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglish 5–10ms，
     // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish）。EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish DOM EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish。
-    const navHtml = rows.join('');
+    const expanded = this.elNav.classList.contains('expanded');
+    const navHtml =
+      `<button class="hud-nav-toggle" type="button" aria-label="Toggle telemetry details" aria-expanded="${expanded}">${expanded ? '−' : '+'}</button>` +
+      `<div class="hud-nav-content">${rows.join('')}</div>`;
     if (navHtml !== this._navHtml) { this._navHtml = navHtml; this.elNav.innerHTML = navHtml; }
   }
 
