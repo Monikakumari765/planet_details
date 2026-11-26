@@ -1112,6 +1112,38 @@ body.walk-mode::after {
   margin-top: 1px;
   accent-color: #34d399;
 }
+.ai-lab-audio {
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 9px;
+  border: 1px solid rgba(119, 170, 213, 0.2);
+  border-radius: 9px;
+  background: rgba(6, 18, 31, 0.42);
+}
+#ai-lab-cosmic-audio {
+  min-height: 34px;
+  border: 1px solid rgba(91, 199, 215, 0.38);
+  border-radius: 8px;
+  background: linear-gradient(110deg, rgba(38, 129, 149, 0.3), rgba(54, 80, 133, 0.28));
+  color: #d3f8ff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  touch-action: manipulation;
+}
+#ai-lab-cosmic-audio:hover:not(:disabled) {
+  background: linear-gradient(110deg, rgba(38, 153, 171, 0.42), rgba(74, 101, 159, 0.38));
+}
+#ai-lab-cosmic-audio:disabled { cursor: wait; opacity: 0.7; }
+.ai-lab-audio > p {
+  margin: 0;
+  color: rgba(190, 211, 231, 0.68);
+  font-size: 9px;
+  line-height: 1.4;
+}
 .ai-lab-results {
   display: grid;
   gap: 9px;

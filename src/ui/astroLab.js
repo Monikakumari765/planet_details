@@ -65,6 +65,17 @@ function mountMarkup(root) {
           <label><input id="ai-lab-universe-motion" type="checkbox" checked> <span>Continuous Universe Motion</span></label>
         </fieldset>
 
+        <section class="ai-lab-audio" aria-label="Cosmic ambient audio">
+          <button id="ai-lab-cosmic-audio" type="button" aria-pressed="false">Cosmic Audio: OFF</button>
+          <label class="ai-lab-slider">
+            <span>Ambient volume <output id="ai-lab-cosmic-volume-value">45%</output></span>
+            <input id="ai-lab-cosmic-volume" type="range" min="0" max="100" step="1" value="45" aria-label="Cosmic ambient audio volume">
+          </label>
+          <p id="ai-lab-cosmic-audio-status" role="status" aria-live="polite">
+            Audio starts only after you turn it on. Optional MP3: /audio/interstellar-theme.mp3.
+          </p>
+        </section>
+
         <div class="ai-lab-results" aria-live="polite">
           <div class="ai-lab-temperature">
             <span id="ai-lab-temp-context">PREDICTED SURFACE TEMPERATURE</span>
@@ -107,6 +118,10 @@ export function mountAstrobiologyLab() {
   const habitableZoneToggle = byId('ai-lab-habitable-zone');
   const lightPulseToggle = byId('ai-lab-light-pulse');
   const universeMotionToggle = byId('ai-lab-universe-motion');
+  const cosmicAudioToggle = byId('ai-lab-cosmic-audio');
+  const cosmicVolumeSlider = byId('ai-lab-cosmic-volume');
+  const cosmicVolumeValue = byId('ai-lab-cosmic-volume-value');
+  const cosmicAudioStatus = byId('ai-lab-cosmic-audio-status');
   const collapseButton = root.querySelector('.ai-lab-collapse');
   if (!collapseButton) throw new Error('Missing astrobiology lab collapse button');
   const sliders = [orbitSlider, pressureSlider, co2Slider, oxygenSlider];
@@ -242,6 +257,30 @@ export function mountAstrobiologyLab() {
   habitableZoneToggle.addEventListener('change', updatePhysicsOverlays);
   lightPulseToggle.addEventListener('change', updatePhysicsOverlays);
   universeMotionToggle.addEventListener('change', updateUniverseMotion);
+  cosmicAudioToggle.addEventListener('click', () => {
+    const enabled = cosmicAudioToggle.getAttribute('aria-pressed') !== 'true';
+    cosmicAudioToggle.disabled = true;
+    cosmicAudioStatus.textContent = enabled ? 'Starting ambient audio…' : 'Fading ambient audio…';
+    window.dispatchEvent(new CustomEvent('cosmic-audio-toggle', { detail: { enabled } }));
+  });
+  cosmicVolumeSlider.addEventListener('input', () => {
+    const volume = Number(cosmicVolumeSlider.value) / 100;
+    cosmicVolumeValue.textContent = `${Math.round(volume * 100)}%`;
+    window.dispatchEvent(new CustomEvent('cosmic-audio-volume-change', {
+      detail: { volume },
+    }));
+  });
+  window.addEventListener('cosmic-audio-state-change', event => {
+    const { enabled, error } = event.detail ?? {};
+    if (typeof enabled !== 'boolean') {
+      throw new TypeError('cosmic-audio-state-change requires an enabled boolean');
+    }
+    cosmicAudioToggle.setAttribute('aria-pressed', String(enabled));
+    cosmicAudioToggle.textContent = `Cosmic Audio: ${enabled ? 'ON' : 'OFF'}`;
+    cosmicAudioToggle.disabled = false;
+    cosmicAudioStatus.textContent = error ||
+      (enabled ? 'Ambient soundscape is playing.' : 'Ambient audio is off.');
+  });
   byId('ai-lab-reset').addEventListener('click', () => resetControls({ restoreVisual: true }));
   resetControls();
   updatePhysicsOverlays();

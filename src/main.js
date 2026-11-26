@@ -59,12 +59,14 @@ import { bootstrapRenderer } from './engine/rendererBootstrap.js';
 import { mountAstrobiologyLab } from './ui/astroLab.js';
 import { createTerraformingOverlays } from './scene/terraformingOverlays.js';
 import { createCosmicMotion } from './scene/cosmicMotion.js';
+import { CosmicAudio, normalizePlanetProximity } from './audio/cosmicAudio.ts';
 
 let builder = null;
 let terraformingOverlays = null;
 let sky = null;
 let cosmicMotion = null;
 let universeMotionEnabled = true;
+const cosmicAudio = new CosmicAudio();
 let terraformOverlayState = {
   showHabitableZone: false,
   showLightPulse: false,
@@ -122,6 +124,29 @@ window.addEventListener('continuous-universe-motion-change', event => {
   universeMotionEnabled = detail.enabled;
   sky?.setMotionEnabled(universeMotionEnabled);
   cosmicMotion?.setEnabled(universeMotionEnabled);
+});
+window.addEventListener('cosmic-audio-toggle', event => {
+  const detail = event.detail;
+  if (!detail || typeof detail.enabled !== 'boolean') {
+    throw new TypeError('cosmic-audio-toggle requires an enabled boolean');
+  }
+  cosmicAudio.setEnabled(detail.enabled).then(() => {
+    window.dispatchEvent(new CustomEvent('cosmic-audio-state-change', {
+      detail: { enabled: cosmicAudio.isEnabled },
+    }));
+  }).catch(error => {
+    console.error('[cosmicAudio]', error);
+    window.dispatchEvent(new CustomEvent('cosmic-audio-state-change', {
+      detail: { enabled: cosmicAudio.isEnabled, error: 'Audio could not be started in this browser.' },
+    }));
+  });
+});
+window.addEventListener('cosmic-audio-volume-change', event => {
+  const volume = event.detail?.volume;
+  if (!Number.isFinite(volume)) {
+    throw new TypeError('cosmic-audio-volume-change requires a finite volume');
+  }
+  cosmicAudio.setVolume(volume);
 });
 
 mountAstrobiologyLab();
@@ -1051,6 +1076,17 @@ function loop() {
     sky?.update(dtReal);
     cosmicMotion?.update(dtReal, camera.position);
   } catch (e) { loopErr('cosmicMotion', e); }
+  try {
+    let proximity = 0;
+    for (const [id, body] of builder.bodies) {
+      if (id === 'sun') continue;
+      const radiusKm = body.phys?.radiusKm;
+      if (!Number.isFinite(radiusKm) || radiusKm <= 0) continue;
+      const distanceKm = camera.position.distanceTo(body.group.position);
+      proximity = Math.max(proximity, normalizePlanetProximity(distanceKm, radiusKm));
+    }
+    cosmicAudio.updateSpatialAudio(proximity);
+  } catch (e) { loopErr('cosmicAudio', e); }
   try {
     builder.postWorldUpdate(ship.posKm, performance.now() / 1000);
   } catch (e) {
