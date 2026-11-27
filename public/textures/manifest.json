@@ -5,5 +5,16 @@
     "height": 4096
   },
   "earth_night.jpg": true,
-  "earth_clouds.jpg": true
+  "earth_clouds.jpg": true,
+  "mercury.jpg": true,
+  "sun.jpg": true,
+  "venus_surface.jpg": true,
+  "venus_atmosphere.jpg": true,
+  "moon.jpg": true,
+  "mars.jpg": true,
+  "saturn.jpg": true,
+  "jupiter.jpg": true,
+  "saturn_ring.png": true,
+  "uranus.jpg": true,
+  "neptune.jpg": true
 }

@@ -86,12 +86,13 @@ Open the local URL printed by Vite (usually `http://localhost:5173`).
 
 ## Data and assets
 
-Large downloaded or generated assets are intentionally excluded from this repository to keep it lightweight. The compact 2K Earth day, night-light, and cloud maps are included so the default globe keeps its detailed observatory look on static deployments; other maps, `public/dem/`, and `public/data/ephemeris/` remain optional. Missing assets use procedural rendering and analytical ephemeris fallbacks where available. Earth’s low-orbit paths are illustrative, not live satellite telemetry.
+Large downloaded or generated assets are intentionally excluded from this repository to keep it lightweight. Compact real maps for the Sun, Moon, and all eight planets are bundled for static deployments; Earth uses NASA’s 8K Blue Marble day map with night-light and cloud layers. Other moon maps, `public/dem/`, and `public/data/ephemeris/` remain optional. Missing assets use procedural rendering and analytical ephemeris fallbacks where available. Earth’s low-orbit paths are illustrative, not live satellite telemetry.
 
 Regenerate optional data when needed:
 
 ```bash
 npm run fetch-textures
+npm run fetch-textures -- --2k sun.jpg mercury.jpg venus_surface.jpg venus_atmosphere.jpg moon.jpg mars.jpg jupiter.jpg saturn.jpg saturn_ring.png uranus.jpg neptune.jpg
 npm run fetch-dem
 npm run fetch-ephemeris
 ```

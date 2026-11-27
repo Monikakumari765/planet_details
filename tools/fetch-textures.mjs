@@ -2,8 +2,9 @@
 // 来源1: solarsystemscope.com（CC-BY-4.0，基于 NASA/USGS/SDO 数据）
 // 来源2: stevealbers.net（NASA Science On a Sphere 项目柱面图，公开数据合成）
 // 每个目标提供候选链，逐一尝试；全部失败则运行时程序化兜底。
+// 用法：node tools/fetch-textures.mjs [--2k] [sun.jpg ...]；不传文件名时处理全部目标。
 
-import { writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
+import { writeFileSync, mkdirSync, existsSync, statSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -40,6 +41,18 @@ const TARGETS = {
   'charon.jpg': [SA + 'pluto/charon/charon_rgb_cyl.jpg'],
 };
 
+const cliArgs = process.argv.slice(2);
+const prefer2k = cliArgs.includes('--2k');
+const requested = cliArgs.filter((arg) => !arg.startsWith('--'));
+const unknown = requested.filter((file) => !Object.hasOwn(TARGETS, file));
+if (unknown.length) {
+  throw new Error(`Unknown texture target(s): ${unknown.join(', ')}`);
+}
+const selected = Object.entries(TARGETS).filter(([file]) => !requested.length || requested.includes(file));
+const manifestPath = join(OUT, 'manifest.json');
+let manifest = {};
+try { manifest = JSON.parse(readFileSync(manifestPath, 'utf8')); } catch { /* first asset run */ }
+
 async function download(url, dest) {
   const res = await fetch(url, { redirect: 'follow', headers: { 'User-Agent': 'heliosphere-game/1.0' } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -53,13 +66,15 @@ async function download(url, dest) {
   return buf.length;
 }
 
-const manifest = {};
-for (const [file, candidates] of Object.entries(TARGETS)) {
+async function fetchTarget([file, originalCandidates]) {
+  const candidates = prefer2k && originalCandidates.length > 1
+    ? originalCandidates.slice(1)
+    : originalCandidates;
   const dest = join(OUT, file);
   if (existsSync(dest) && statSync(dest).size > 10000) {
-    manifest[file] = true;
+    if (!manifest[file]) manifest[file] = true;
     console.log(`⏭  ${file} 已存在`);
-    continue;
+    return;
   }
   let ok = false;
   for (const url of candidates) {
@@ -76,6 +91,10 @@ for (const [file, candidates] of Object.entries(TARGETS)) {
   if (!ok) console.log(`⚠️  ${file} 全部失败 → 运行时程序化兜底`);
 }
 
-writeFileSync(join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2));
-const got = Object.values(manifest).filter(Boolean).length;
-console.log(`\n完成: ${got}/${Object.keys(TARGETS).length} 个贴图就绪，manifest.json 已写入`);
+for (let i = 0; i < selected.length; i += 4) {
+  await Promise.all(selected.slice(i, i + 4).map(fetchTarget));
+}
+
+writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+const got = selected.filter(([file]) => Boolean(manifest[file])).length;
+console.log(`\n完成: ${got}/${selected.length} 个选中贴图就绪，manifest.json 已写入`);
