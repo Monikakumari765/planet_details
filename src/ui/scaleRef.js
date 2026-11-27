@@ -51,10 +51,12 @@ export class ScaleReference {
   /**
    * @param {THREE.Scene} scene
    * @param {THREE.Camera} camera
+   * @param {THREE.Texture|null} earthTexture
    */
-  constructor(scene, camera) {
+  constructor(scene, camera, earthTexture = null) {
     this.scene = scene;
     this.camera = camera;
+    this.earthTexture = earthTexture;
     this._human = null;       // THREE.Group
     this._humanGeos = [];
     this._humanMat = null;
@@ -140,7 +142,10 @@ export class ScaleReference {
 
     // EnglishEnglish：EnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish
     const earthGeo = new THREE.SphereGeometry(EARTH_RADIUS_KM, 32, 16);
-    const earthMat = new THREE.MeshBasicMaterial({ color: 0x2266bb });
+    const earthMat = new THREE.MeshBasicMaterial({
+      map: this.earthTexture,
+      color: this.earthTexture ? 0xffffff : 0x2266bb,
+    });
     const earth = new THREE.Mesh(earthGeo, earthMat);
     earth.position.x = -EARTH_MOON_DIST_KM / 2;
     group.add(earth);

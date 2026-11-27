@@ -598,7 +598,7 @@ async function init() {
   compass = new Compass(document.body);
 
   // EnglishEnglishEnglishEnglishEnglish（#38）：EnglishEnglishEnglishEnglish + EnglishEnglishEnglishEnglish
-  scaleRef = new ScaleReference(scene, camera);
+  scaleRef = new ScaleReference(scene, camera, builder.cache.get('earth_day.jpg') ?? null);
 
   // EnglishEnglishEnglishEnglish（#52）：localStorage EnglishEnglishEnglish
   bookmarks = new Bookmarks();

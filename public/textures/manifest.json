@@ -1,5 +1,9 @@
 {
-  "earth_day.jpg": true,
+  "earth_day.jpg": {
+    "h": "nasa-bmng-january-8k-v1",
+    "width": 8192,
+    "height": 4096
+  },
   "earth_night.jpg": true,
   "earth_clouds.jpg": true
 }

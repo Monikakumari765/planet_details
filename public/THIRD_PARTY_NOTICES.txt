@@ -63,8 +63,15 @@ Service: <https://trek.nasa.gov/> · NASA / USGS / DLR · public domain.
 `deimos.jpg` is the only texture under a share-alike licence. It is redistributed
 under CC BY-SA 3.0; the rest of this repository remains MIT.
 
+### Earth surface map
+
+`earth_day.jpg` is NASA Earth Observatory's Blue Marble: Next Generation
+January global base map. It is a 21600 × 10800 equirectangular map, resized to
+8192 × 4096 for the browser build. Source: NASA Earth Observatory, Blue Marble
+Next Generation (https://science.nasa.gov/earth/earth-observatory/blue-marble-next-generation/base-map/).
+
 ### Earlier textures
 
-The remaining maps in `public/textures/` come from Solar System Scope
-(CC BY 4.0, derived from NASA/USGS/SDO imagery) and Steve Albers' NASA Science
-on a Sphere cylindrical maps. See `tools/fetch-textures.mjs`.
+The other maps in `public/textures/` come from Solar System Scope (CC BY 4.0,
+derived from NASA/USGS/SDO imagery) and Steve Albers' NASA Science on a Sphere
+cylindrical maps. See `tools/fetch-textures.mjs`.

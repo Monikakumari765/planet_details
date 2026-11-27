@@ -210,7 +210,9 @@ async function loadTextures(onProgress, onBgProgress) {
     if (!manifest[file]) { finish(); return; }
     const p = pManifest[file];
     loader.load(
-      (p ? asset('textures/preview/' + p.p) : asset('textures/' + file)) + (p?.ph || p?.h ? '?v='+(p.ph??p.h) : ''),
+      (p ? asset('textures/preview/' + p.p) : asset('textures/' + file)) +
+        ((p?.ph || p?.h || manifest[file]?.h)
+          ? '?v=' + (p?.ph ?? p?.h ?? manifest[file]?.h) : ''),
       (tex) => {
         if (settled) { tex.dispose(); return; }
         tex.colorSpace = THREE.SRGBColorSpace;

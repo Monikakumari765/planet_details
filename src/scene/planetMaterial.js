@@ -131,7 +131,9 @@ export const TEXTURE_LIN_MEAN = {
   'enceladus.jpg': 0.1363, 'mimas.jpg': 0.1653, 'tethys.jpg': 0.1887, 'dione.jpg': 0.2106,
   'rhea.jpg': 0.1709, 'iapetus.jpg': 0.2244, 'titan.jpg': 0.2477, 'charon.jpg': 0.1664,
   'europa.png': 0.5171, 'io.jpg': 0.2872, 'callisto.jpg': 0.1669, 'ganymede.jpg': 0.2076,
-  'moon.jpg': 0.3026, 'mercury.jpg': 0.2277, 'mars.jpg': 0.2186, 'earth_day.jpg': 0.1958,
+  'moon.jpg': 0.3026, 'mercury.jpg': 0.2277, 'mars.jpg': 0.2186,
+  // Recomputed in linear sRGB from NASA Blue Marble: Next Generation (8192x4096).
+  'earth_day.jpg': 0.1688,
   'pluto.jpg': 0.3975, 'jupiter.jpg': 0.3613, 'saturn.jpg': 0.5440, 'uranus.jpg': 0.5505,
   'neptune.jpg': 0.1010, 'triton.jpg': 0.3096, 'venus_atmosphere.jpg': 0.5543,
 };
