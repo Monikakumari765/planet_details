@@ -88,7 +88,7 @@ const BODY_GRADE = {
   // EnglishEnglish/EnglishEnglish：ACES EnglishEnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish/EnglishEnglishEnglishEnglishEnglishEnglishEnglish。
   // EnglishEnglishEnglish sat English**EnglishEnglishEnglish**EnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglish/EnglishEnglishEnglishEnglishEnglish），EnglishEnglishEnglish
   // "EnglishEnglish R−B EnglishEnglishEnglishEnglishEnglishEnglishEnglish"EnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglish。
-  jupiter: { sat: 1.35 },
+  jupiter: { sat: 1.12, dim: 0.84 },
   // Voyager 2's pale cyan disk should retain tonal range; avoid the previous
   // channel lift, which clipped the methane cloud deck toward white.
   uranus:  { grade: [0.92, 1.02, 1.08], sat: 0.92 },
@@ -278,7 +278,10 @@ export function createPlanetMaterial({
     // EnglishEnglishEnglishEnglishEnglishEnglishEnglish（BODY_GRADE English；EnglishEnglish = EnglishEnglishEnglish）
     // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（DISPLAY_GRADE EnglishEnglishEnglishEnglishEnglishEnglish）
     uGrade: { value: new THREE.Vector3(...(DISPLAY_GRADE[bodyId]?.grade ?? [1, 1, 1])) },
-    uAlbedoTint: { value: new THREE.Color(({ uranus: '#67d4e8', neptune: '#2563eb' })[bodyId] ?? '#ffffff') },
+    uAlbedoTint: { value: new THREE.Color(({
+      jupiter: '#e8d5c0', saturn: '#f0e3c8',
+      uranus: '#67d4e8', neptune: '#2563eb',
+    })[bodyId] ?? '#ffffff') },
     uInvScaleY: { value: 1 },
     uDetailScaleN: { value: Math.min(1, radiusKm / 400) },
     // Hapke EnglishEnglishEnglishEnglishEnglish：English shade EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish 2/3，

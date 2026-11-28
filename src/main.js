@@ -61,7 +61,6 @@ import { createTerraformingOverlays } from './scene/terraformingOverlays.js';
 import { createCosmicMotion } from './scene/cosmicMotion.js';
 import { CosmicAudio, normalizePlanetProximity } from './audio/cosmicAudio.ts';
 import { createUserObserverBeacon } from './scene/userObserverBeacon.js';
-import { createEarthOrbitDisplay } from './scene/earthOrbitDisplay.js';
 import { mountUserObserver } from './ui/userObserver.js';
 import {
   observerSurfacePoint,
@@ -72,7 +71,6 @@ import { planetPosition } from './astro/planets.js';
 let builder = null;
 let terraformingOverlays = null;
 let sky = null;
-let earthOrbitDisplay = null;
 let cosmicMotion = null;
 let observerBeacon = null;
 let observerUi = null;
@@ -358,6 +356,8 @@ const input = new Input(window, canvas);
 const ship = new Ship();
 const orbitCam = new OrbitCamera(camera);
 const simClock = new SimClock();
+simClock.rate = hud.warpRate(false);
+let spinJDTT = simClock.jdTT;
 const clock = new THREE.Clock();
 
 let comets, labels, searchUI, belts, oortCloud, tnoScene, smallBodies;
@@ -380,12 +380,28 @@ const LABEL_CLICK_WINDOW = 250;
 let audioEngine, compass, scaleRef, bookmarks, tourSystem, narrator, teacherToolkit, eclipseSystem, webxr;
 let apolloLandmarks, roverSites;
 
-init();
+init().catch((error) => {
+  console.error('[startup] Solar system initialization failed:', error);
+  const button = document.getElementById('start-btn');
+  const label = document.getElementById('start-btn-text');
+  const fill = document.getElementById('start-btn-fill');
+  if (label) label.textContent = 'Startup failed';
+  if (fill) fill.style.width = '100%';
+  if (button) {
+    button.disabled = false;
+    button.onclick = () => location.reload();
+    const message = document.createElement('p');
+    message.id = 'startup-error';
+    message.setAttribute('role', 'alert');
+    message.style.cssText = 'max-width:min(720px,90vw);margin:18px auto 0;color:#fca5a5;font:13px/1.5 ui-monospace,monospace;overflow-wrap:anywhere';
+    message.textContent = `${error?.name ?? 'Error'}: ${error?.message ?? String(error)} — click to retry`;
+    button.after(message);
+  }
+});
 
 async function init() {
   applyDomI18n();
   builder = await buildSolarSystem(scene, world, (d, total) => hud.setLoading(d, total), (d, total) => hud.setBgLoading(d, total), renderer);
-  earthOrbitDisplay = createEarthOrbitDisplay(builder.bodies.get('earth'));
   for (const [planetName, params] of pendingPlanetAtmosphereVisuals) {
     builder.setPlanetAtmosphereVisual(planetName, params);
   }
@@ -551,7 +567,7 @@ async function init() {
   setupTerrainMgr();
 
   // EnglishEnglish：GE EnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglishEnglish）
-  builder.update(simClock.jdTT, ship.posKm);
+  builder.update(simClock.jdTT, ship.posKm, spinJDTT);
   orbitCam.init(orbitEnv, 'earth', 4);
   syncShipToOrbit();
   select('earth');
@@ -695,7 +711,7 @@ async function init() {
     const jdAfter = simClock.jdTT;
     // EnglishEnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglish/EnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglish
     if (Math.abs(jdAfter - jdBefore) > 1e-12) {
-      builder.update(jdAfter, ship.posKm);
+      builder.update(jdAfter, ship.posKm, spinJDTT);
       comets.update(jdAfter, ship.posKm);
       tnoScene.update(jdAfter, ship.posKm);
       for (const v of voyagerEntries) {
@@ -1039,11 +1055,11 @@ function loop() {
   input.pollGamepad(appMode); // EnglishEnglish（EnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglish）
   simClock.rateTarget = hud.warpRate(simClock.paused); // rate English tick EnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglish）
   const jdTT = simClock.tick(dtReal);
+  if (!simClock.paused) spinJDTT += dtReal * dampedSpinRate(simClock.rate) / 86400;
 
   // EnglishEnglishEnglishEnglish（try-catch EnglishEnglish：builder.update EnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish）
   try {
-    builder.update(jdTT, ship.posKm);
-  earthOrbitDisplay?.update(jdTT, camera, orbitCam.focusId, appMode);
+    builder.update(jdTT, ship.posKm, spinJDTT);
   } catch (e) {
     if (!loop._builderErr) {
       loop._builderErr = true;
@@ -1658,7 +1674,24 @@ function handleTimeKeys() {
   if (input.tapped('BracketRight')) hud.warpUp();
   if (input.tapped('BracketLeft')) hud.warpDown();
   if (input.tapped('KeyP')) simClock.paused = !simClock.paused;
-  if (input.tapped('KeyN')) { simClock.setNow(); hud.warpReset(); simClock.paused = false; }
+  if (input.tapped('KeyN')) {
+    simClock.setNow();
+    spinJDTT = simClock.jdTT;
+    hud.warpReset();
+    simClock.paused = false;
+  }
+}
+
+// Compress visual axial spin smoothly above 60× while orbital ephemerides keep
+// following the full simulation warp. This avoids texture aliasing at high rates.
+function dampedSpinRate(rate) {
+  const threshold = 100;
+  const cap = 300;
+  const magnitude = Math.abs(rate);
+  const damped = magnitude <= threshold
+    ? magnitude
+    : threshold + (cap - threshold) * Math.tanh((magnitude - threshold) / (cap - threshold));
+  return Math.sign(rate) * damped;
 }
 
 const PLANET_KEYS = {
@@ -2131,7 +2164,10 @@ function applyLocationHash() {
   orbitCam.panOffset.set(0, 0, 0);
   if (jdStr) {
     const jd = parseFloat(jdStr);
-    if (isFinite(jd) && jd > 2000000) simClock.jdTT = jd;
+    if (isFinite(jd) && jd > 2000000) {
+      simClock.jdTT = jd;
+      spinJDTT = jd;
+    }
   }
   syncShipToOrbit();
   select(focusId);
@@ -2219,7 +2255,10 @@ function restoreLatestBookmark() {
   const latest = items[0];
   if (!latest) { showActionTip(t('tip.bookmarkNone')); return; }
   const s = latest.state ?? {};
-  if (s.jdTT) simClock.set(s.jdTT);
+  if (s.jdTT) {
+    simClock.set(s.jdTT);
+    spinJDTT = s.jdTT;
+  }
   if (s.focusId && registry.has(s.focusId)) {
     if (appMode !== 'orbit') switchToOrbit();
     if (s.lat != null) orbitCam.lat = s.lat;

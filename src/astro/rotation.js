@@ -64,14 +64,15 @@ export function transpose(m) {
  * EnglishEnglishEnglish → EnglishEnglishJ2000 EnglishEnglishEnglishEnglishEnglish。
  * ICRF→EnglishEnglish = Rz(W)·Rx(90°−Dec)·Rz(90°+RA)，EnglishEnglishEnglishEnglishEnglish→ICRF，EnglishEnglishEnglish Rx(−ε) EnglishEnglishEnglish。
  */
-export function bodyToEclipticMatrix(bodyId, jdTT) {
+export function bodyToEclipticMatrix(bodyId, jdTT, spinJDTT = jdTT) {
   const p = IAU_ROTATION[bodyId];
   if (!p) return null;
   const d = jdTT - J2000;
   const T = d / 36525;
   const RA = (p[0] + p[1] * T) * DEG;
   const Dec = (p[2] + p[3] * T) * DEG;
-  const W = (p[4] + p[5] * d) * DEG;
+  const spinDays = spinJDTT - J2000;
+  const W = (p[4] + p[5] * spinDays) * DEG;
   const icrfToBody = matMul(Rz(W), matMul(Rx(Math.PI / 2 - Dec), Rz(Math.PI / 2 + RA)));
   const bodyToIcrf = transpose(icrfToBody);
   // EnglishEnglish→EnglishEnglish：EnglishEnglishEnglish Rx EnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglish）EnglishEnglish，EnglishEnglishEnglishEnglish x EnglishEnglish +ε EnglishEnglishEnglishEnglish；

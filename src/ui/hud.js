@@ -8,7 +8,7 @@ import { t, bodyName, LANG } from './i18n.js';
 import { DESC_EN } from './contentEn.js';
 import { ephemerisCovers } from '../astro/sampledEphemeris.js';
 
-const WARP_LADDER = [1, 10, 60, 600, 3600, 21600, 86400, 604800, 2592000, 31557600, 315576000];
+const WARP_LADDER = [1, 10, 60, 600, 2500, 3600, 21600, 50000, 86400, 604800, 2592000, 31557600, 315576000];
 
 export class HUD {
   constructor() {
@@ -26,7 +26,7 @@ export class HUD {
     this.elTip = document.getElementById('hud-tip');
     this.help = document.getElementById('help');
     this.start = document.getElementById('start');
-    this.warpIndex = 0;
+    this.warpIndex = WARP_LADDER.indexOf(2500);
     this.warpSign = 1;
     // EnglishEnglishEnglishEnglishEnglishEnglish：EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish；"EnglishEnglishEnglish"EnglishEnglishEnglishEnglish
     this.factIdx = new Map();

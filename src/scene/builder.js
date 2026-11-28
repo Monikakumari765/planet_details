@@ -387,7 +387,7 @@ function haloPressureValues(pressureAtm) {
 function nativeHaloValues(id, pressureAtm) {
   const opacity = {
     mercury: 0, moon: 0, mars: 0.06, earth: 0.18, venus: 0.14,
-    jupiter: 0.04, saturn: 0.04, uranus: 0.07, neptune: 0.10,
+    jupiter: 0, saturn: 0, uranus: 0.07, neptune: 0.10,
   }[id];
   if (opacity !== undefined) return { opacity, shellScale: id === 'neptune' ? 1.022 : 1.008 };
   return haloPressureValues(pressureAtm);
@@ -820,7 +820,7 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress, r
     }
   }
 
-  function update(jdTT, camPosKm) {
+  function update(jdTT, camPosKm, spinJDTT = jdTT) {
     refreshOrbitLines(jdTT);
     // EnglishEnglishEnglishEnglishEnglishEnglish（three EnglishEnglishEnglish km）→ EnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglish
     const camEcl = camPosKm ? { x: camPosKm[0], y: -camPosKm[2], z: camPosKm[1] } : null;
@@ -841,7 +841,7 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress, r
 
     for (const [id, e] of bodies) {
       if (id === 'sun') {
-        const m = bodyToEclipticMatrix('sun', jdTT);
+        const m = bodyToEclipticMatrix('sun', jdTT, spinJDTT);
         eclMatrixToWorldQuat(m, e.mesh.quaternion);
         continue;
       }
@@ -873,7 +873,7 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress, r
         // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish——EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglish ±7.9°、
         // EnglishEnglish ±6.7°），EnglishEnglishEnglishEnglishEnglishEnglish 59% EnglishEnglishEnglish 50%。
         // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish：EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglish IAU EnglishEnglish。
-        const m = bodyToEclipticMatrix(id, jdTT);
+        const m = bodyToEclipticMatrix(id, jdTT, spinJDTT);
         eclMatrixToWorldQuat(m, e.mesh.quaternion);
       } else {
         // EnglishEnglishEnglishEnglish：z=EnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish
@@ -939,8 +939,12 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress, r
       }
       if (e.ringMesh) {
         const u = e.ringMesh.material.userData.uniforms;
-        u.uSunDir.value.copy(_sunDir);
-        u.uSunI.value = sunI;
+        // Custom ring shaders expose solar uniforms. Standard-material rings
+        // (such as Uranus's RingGeometry) receive lighting from Three.js.
+        if (u?.uSunDir) {
+          u.uSunDir.value.copy(_sunDir);
+          u.uSunI.value = sunI;
+        }
       }
       // === Issue #27/#29/#36：EnglishEnglish/EnglishEnglish uniforms ===
       // EnglishEnglishEnglishEnglishEnglish = arcsin(sunDir · poleAxis)，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish
