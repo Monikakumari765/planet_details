@@ -112,8 +112,15 @@ export function isVoiceEnabled(): boolean {
 }
 
 export function setVoiceEnabled(enabled: boolean): void {
+  const wasEnabled = voiceEnabled;
   voiceEnabled = Boolean(enabled);
-  if (!voiceEnabled) stopSpeaking();
+  if (!voiceEnabled) {
+    stopSpeaking();
+  } else if (!wasEnabled && lastSpokenText) {
+    // Turning voice back on should audibly resume the guide experience; cancel()
+    // stopped the old utterance, so replay the most recent answer from its start.
+    speakText(lastSpokenText);
+  }
 }
 
 export function onVoiceStateChange(callback: (state: 'speaking' | 'paused' | 'idle') => void): () => void {
