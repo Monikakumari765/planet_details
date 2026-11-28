@@ -387,16 +387,16 @@ function haloPressureValues(pressureAtm) {
 function nativeHaloValues(id, pressureAtm) {
   const opacity = {
     mercury: 0, moon: 0, mars: 0.06, earth: 0.18, venus: 0.14,
-    jupiter: 0.04, saturn: 0.04, uranus: 0.07, neptune: 0.07,
+    jupiter: 0.04, saturn: 0.04, uranus: 0.07, neptune: 0.10,
   }[id];
-  if (opacity !== undefined) return { opacity, shellScale: 1.008 };
+  if (opacity !== undefined) return { opacity, shellScale: id === 'neptune' ? 1.022 : 1.008 };
   return haloPressureValues(pressureAtm);
 }
 
 function nativeHaloTint(id, phys) {
   const colors = {
     mars: '#d97745', earth: '#38bdf8', venus: '#fde68a',
-    jupiter: '#d6b57c', saturn: '#d8c58f', uranus: '#67e8f9', neptune: '#3b82f6',
+    jupiter: '#d6b57c', saturn: '#d8c58f', uranus: '#67e8f9', neptune: '#1d4ed8',
   };
   return colors[id] ? new THREE.Color(colors[id]) : nativeHaloColor(phys);
 }
@@ -422,7 +422,7 @@ function terraformHaloColor(o2Pct, co2Pct) {
   return color.lerp(HALO_BALANCED_COLOR, balancedWeight);
 }
 
-function createTerraformHaloMaterial(color, opacity) {
+function createTerraformHaloMaterial(color, opacity, options = {}) {
   return new THREE.ShaderMaterial({
     uniforms: {
       uColor: { value: color.clone() },
@@ -469,10 +469,12 @@ function createTerraformHaloMaterial(color, opacity) {
         gl_FragColor = vec4(uColor, alpha);
       }
     `,
-    side: THREE.FrontSide,
+    side: options.side ?? THREE.FrontSide,
     transparent: true,
     depthTest: true,
     depthWrite: false,
+    polygonOffset: !!options.polygonOffset,
+    polygonOffsetFactor: options.polygonOffsetFactor ?? 0,
     blending: THREE.NormalBlending,
     toneMapped: false,
     fog: false,
@@ -611,7 +613,11 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress, r
     if (!skipAtmo) {
       const defaults = nativeHaloValues(id, HALO_DEFAULT_PRESSURE_ATM[id]);
       const color = nativeHaloTint(id, phys);
-      const haloMat = createTerraformHaloMaterial(color, defaults.opacity);
+      const haloMat = createTerraformHaloMaterial(color, defaults.opacity, id === 'neptune' ? {
+        side: THREE.BackSide,
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+      } : undefined);
       const halo = new THREE.Mesh(terraformHaloGeometry, haloMat);
       halo.name = `${id}-terraform-atmosphere-halo`;
       halo.renderOrder = 11;

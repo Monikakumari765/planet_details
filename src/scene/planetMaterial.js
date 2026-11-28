@@ -97,7 +97,9 @@ const BODY_GRADE = {
   // dim English**EnglishEnglishEnglish**EnglishEnglish（EnglishEnglishEnglishEnglishEnglish）：EnglishEnglishEnglishEnglishEnglishEnglish 0.442 EnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglish
   // EnglishEnglishEnglishEnglishEnglish 4 English（EnglishEnglishEnglishEnglishEnglishEnglish）。EnglishEnglishEnglishEnglish 0.45，EnglishEnglishEnglish"EnglishEnglishEnglishEnglishEnglishEnglish"EnglishEnglish
   // EnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish。
-  neptune: { grade: [2.50, 2.50, 2.50], tint: [0.86, 1.02, 1.09], tintMix: 0.94, dim: 0.28 },
+  // Keep Neptune's Voyager-era blue while preserving dark storm detail from
+  // the texture instead of washing it toward pale cyan.
+  neptune: { grade: [2.50, 2.50, 2.50], tint: [0.22, 0.38, 0.92], tintMix: 0.35, dim: 0.28 },
   pluto:   { grade: [1, 1, 1], sat: 1 },
   triton:  { grade: [1.08, 1.00, 0.95], sat: 1 },
   callisto: { grade: [0.90, 0.90, 0.92] },         // EnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglish
@@ -276,7 +278,7 @@ export function createPlanetMaterial({
     // EnglishEnglishEnglishEnglishEnglishEnglishEnglish（BODY_GRADE English；EnglishEnglish = EnglishEnglishEnglish）
     // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（DISPLAY_GRADE EnglishEnglishEnglishEnglishEnglishEnglish）
     uGrade: { value: new THREE.Vector3(...(DISPLAY_GRADE[bodyId]?.grade ?? [1, 1, 1])) },
-    uAlbedoTint: { value: new THREE.Color(bodyId === 'uranus' ? '#67d4e8' : '#ffffff') },
+    uAlbedoTint: { value: new THREE.Color(({ uranus: '#67d4e8', neptune: '#2563eb' })[bodyId] ?? '#ffffff') },
     uInvScaleY: { value: 1 },
     uDetailScaleN: { value: Math.min(1, radiusKm / 400) },
     // Hapke EnglishEnglishEnglishEnglishEnglish：English shade EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish 2/3，
