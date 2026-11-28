@@ -57,7 +57,7 @@ html, body {
   backdrop-filter: blur(6px);
 }
 #hud-time { min-width: 240px; }
-#hud-nav { bottom: 14px; left: 14px; min-width: 280px; }
+#hud-nav { display: none !important; }
 #hud-target { top: 14px; right: 14px; width: 300px; }
 #hud-tip {
   position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%);
@@ -1488,7 +1488,9 @@ body.walk-mode::after {
   padding: 0 15px;
   border-radius: 999px;
   color: #c9f2ff;
-  font: 600 13px inherit;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
 }
 #ai-planet-assistant .planet-guide-toggle:hover { border-color: rgba(56,189,248,.55); background: rgba(7,17,31,.96); }
@@ -1517,12 +1519,12 @@ body.walk-mode::after {
 .planet-guide-followups { padding:0; }
 .planet-guide-chip { border:1px solid rgba(56,189,248,.2); border-radius:999px; padding:6px 9px; background:rgba(8,31,49,.75); color:#a9dff2; font:inherit; font-size:10px; cursor:pointer; }
 .planet-guide-chip:hover { border-color:rgba(56,189,248,.5); background:rgba(10,53,77,.82); }
-.planet-guide-fly { margin:0 12px 9px; padding:9px 11px; border:1px solid rgba(56,189,248,.35); border-radius:9px; background:rgba(5,66,91,.38); color:#bff1ff; font:600 12px inherit; text-align:left; cursor:pointer; }
+.planet-guide-fly { margin:0 12px 9px; padding:9px 11px; border:1px solid rgba(56,189,248,.35); border-radius:9px; background:rgba(5,66,91,.38); color:#bff1ff; font-family:inherit; font-size:12px; font-weight:600; text-align:left; cursor:pointer; }
 .planet-guide-fly[hidden] { display:none; }
 .planet-guide-form { display:flex; gap:7px; padding:10px 12px 12px; border-top:1px solid rgba(56,189,248,.14); }
 .planet-guide-form input { min-width:0; flex:1; height:38px; padding:0 10px; border:1px solid rgba(120,170,210,.2); border-radius:9px; outline:none; background:rgba(12,22,37,.85); color:#e8f4ff; font:inherit; font-size:12px; }
 .planet-guide-form input:focus { border-color:rgba(56,189,248,.58); }
-.planet-guide-form button { padding:0 13px; border:1px solid rgba(56,189,248,.35); border-radius:9px; background:rgba(8,82,113,.38); color:#c9f2ff; font:600 12px inherit; cursor:pointer; }
+.planet-guide-form button { padding:0 13px; border:1px solid rgba(56,189,248,.35); border-radius:9px; background:rgba(8,82,113,.38); color:#c9f2ff; font-family:inherit; font-size:12px; font-weight:600; cursor:pointer; }
 @media (max-width: 768px) {
   #ai-planet-assistant { left:12px; bottom:72px; width:min(420px, calc(100vw - 24px)); }
   #ai-planet-assistant.open .planet-guide-toggle { display:none; }

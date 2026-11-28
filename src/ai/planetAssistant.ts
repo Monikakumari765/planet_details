@@ -9,8 +9,9 @@ export interface PlanetAssistantAnswer {
 
 const AU_KM = 149_597_870.7;
 const C_KM_S = 299_792.458;
-const BODIES = ['sun', 'mercury', 'venus', 'earth', 'moon', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'europa', 'titan', 'enceladus'];
 const NAMES: Record<string, string> = { sun: 'Sun', moon: 'Moon', mercury: 'Mercury', venus: 'Venus', earth: 'Earth', mars: 'Mars', jupiter: 'Jupiter', saturn: 'Saturn', uranus: 'Uranus', neptune: 'Neptune', europa: 'Europa', titan: 'Titan', enceladus: 'Enceladus' };
+const PLANET_GM_KM3_S2: Record<string, number> = { mercury: 22032, venus: 324859, earth: 398600.4418, mars: 42828.375, jupiter: 126686534, saturn: 37931207.8, uranus: 5793939, neptune: 6836529 };
+const PLANET_RADIUS_KM: Record<string, number> = { mercury: 2439.7, venus: 6051.8, earth: 6371, mars: 3389.5, jupiter: 69911, saturn: 58232, uranus: 25362, neptune: 24622 };
 
 const FACTS: Record<string, string> = {
   sun: 'The Sun is a G2V star made mainly of hydrogen (~73% by mass) and helium (~25%), with a ~5,778 K photosphere. Its core fuses hydrogen into helium; the solar wind and magnetic activity shape the heliosphere.',
@@ -77,11 +78,17 @@ export function answerPlanetQuestion(question: string): PlanetAssistantAnswer {
     return { reply: `Live Earth–${NAMES[target]} center-to-center distance: ${d.au.toFixed(4)} AU (${d.km.toLocaleString('en-US', { maximumFractionDigits: 0 })} km). One-way light travel time is about ${d.lightMinutes.toFixed(2)} minutes (t = d/c).`, targetPlanet: target, followUps: ['How does light delay affect communication?', `Tell me about ${NAMES[target]} gravity`] };
   }
   if (/clock|relativ|time dilation|drift/.test(q) && target) {
-    const d = liveDistance(target);
-    const r = target === 'sun' ? 695700 : 149597870.7;
-    const phi = (1.32712440018e11 / r - 3.986004418e5 / (d.km || r)) / (C_KM_S * C_KM_S);
-    const drift = Math.abs(phi) * 86400 * 1e6;
-    return { reply: `A rough gravitational clock-rate comparison for ${NAMES[target]} versus an Earth-surface reference is about ${drift.toFixed(2)} μs/day at this epoch. This estimate uses a simplified Sun-plus-Earth potential and omits rotation, altitude and relativistic coordinate conventions; spacecraft clock corrections require a full mission model.`, targetPlanet: target, followUps: FOLLOWUPS.general };
+    const jdTT = jdUTtoTT(dateToJD(new Date()));
+    const earthPos = planetPosition('earth', jdTT);
+    const planetPos = target === 'sun' ? { x: 0, y: 0, z: 0 } : planetPosition(target, jdTT);
+    const earthR = Math.hypot(earthPos.x, earthPos.y, earthPos.z);
+    const targetR = target === 'sun' ? 695700 : Math.hypot(planetPos.x, planetPos.y, planetPos.z);
+    const earthPotential = 1.32712440018e11 / earthR + PLANET_GM_KM3_S2.earth / PLANET_RADIUS_KM.earth;
+    const targetPotential = target === 'sun'
+      ? 1.32712440018e11 / 695700
+      : 1.32712440018e11 / targetR + PLANET_GM_KM3_S2[target] / PLANET_RADIUS_KM[target];
+    const drift = Math.abs(targetPotential - earthPotential) / (C_KM_S * C_KM_S) * 86400 * 1e6;
+    return { reply: `A rough gravitational clock-rate comparison for ${NAMES[target]}’s reference surface versus Earth’s surface is about ${drift.toFixed(2)} μs/day at this epoch. This simplified estimate includes the Sun’s potential and the two planets’ surface potentials; it omits rotation, altitude, other bodies, and relativistic coordinate conventions. Spacecraft clock corrections require a full mission model.`, targetPlanet: target, followUps: FOLLOWUPS.general };
   }
   if (target) {
     const category = /atmos|weather|storm|wind|pressure|gas|greenhouse/.test(q) ? 'Atmosphere & weather' : /gravity|orbit|escape|core|tilt|year|structure/.test(q) ? 'Gravity, orbit & structure' : 'Planetary profile';
