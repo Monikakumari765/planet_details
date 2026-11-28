@@ -180,7 +180,7 @@ export const BODIES = {
       heightKm: 250, rayleighScaleKm: 28, mieScaleKm: 28,
       rayleigh: [2.0e-7, 3.2e-7, 3.6e-7], mie: 1.5e-7, mieG: 0.65, multiplier: 0.9,
     },
-    rings: { innerKm: 37000, outerKm: 51140, texture: null, opacity: 0.55, tint: [0.45, 0.45, 0.48],
+    rings: { innerKm: 41837, outerKm: 51600, texture: null, opacity: 0.22, tint: [0.55, 0.62, 0.66],
       // EnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglish km、EnglishEnglish km、EnglishEnglishEnglishEnglishEnglishEnglish）：EnglishEnglish 6/5/4/α/β/η/γ/δ/ε
       narrow: [
         [41837, 2, 0.35], [42234, 3, 0.4], [42570, 2, 0.35],  // 6, 5, 4

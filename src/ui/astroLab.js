@@ -100,6 +100,7 @@ function mountMarkup(root) {
   `;
 }
 
+
 export function mountAstrobiologyLab() {
   const root = document.getElementById('ai-astro-lab');
   if (!root) throw new Error('Missing #ai-astro-lab mount point');
@@ -300,3 +301,5 @@ export function mountAstrobiologyLab() {
     },
   };
 }
+
+

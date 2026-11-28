@@ -298,7 +298,7 @@ overlayCam.add(evaSuit);
 overlayScene.add(helmet);
 let thirdPerson = false;   // V EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish/EnglishEnglishEnglishEnglish
 
-const ambient = new THREE.AmbientLight(0x404858, 0.02);
+const ambient = new THREE.AmbientLight(0x404858, 0.05);
 scene.add(ambient);
 
 // HDR EnglishEnglish：HalfFloat EnglishEnglishEnglishEnglish——EnglishEnglish（EnglishEnglish ×14 HDR、EnglishEnglish、EnglishEnglishEnglishEnglish）English
@@ -384,7 +384,7 @@ init();
 
 async function init() {
   applyDomI18n();
-  builder = await buildSolarSystem(scene, world, (d, total) => hud.setLoading(d, total), (d, total) => hud.setBgLoading(d, total));
+  builder = await buildSolarSystem(scene, world, (d, total) => hud.setLoading(d, total), (d, total) => hud.setBgLoading(d, total), renderer);
   earthOrbitDisplay = createEarthOrbitDisplay(builder.bodies.get('earth'));
   for (const [planetName, params] of pendingPlanetAtmosphereVisuals) {
     builder.setPlanetAtmosphereVisual(planetName, params);

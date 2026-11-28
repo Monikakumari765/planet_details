@@ -57,6 +57,10 @@ const TEX_PRIORITY = [
   'uranus.jpg', 'neptune.jpg', 'triton.jpg', 'pluto.jpg', 'charon.jpg',
   'earth_clouds.jpg',
 ];
+const FULL_RES_FIRST = new Set([
+  'jupiter.jpg', 'mars.jpg', 'earth_day.jpg', 'saturn.jpg', 'uranus.jpg',
+  'venus_surface.jpg', 'mercury.jpg',
+]);
 
 function priorityOf(file) {
   const i = TEX_PRIORITY.indexOf(file);
@@ -178,7 +182,7 @@ function progressiveTextures(files, cache, manifest, onProgress) {
   return { upgrades, boost };
 }
 
-async function loadTextures(onProgress, onBgProgress) {
+async function loadTextures(renderer, onProgress, onBgProgress) {
   const getManifest = async path => {
     try {
       const response = await fetch(asset(path), { cache: 'no-store', signal: AbortSignal.timeout(8000) });
@@ -208,7 +212,7 @@ async function loadTextures(onProgress, onBgProgress) {
       onProgress?.(++done, wanted.size, file); resolve();
     };
     if (!manifest[file]) { finish(); return; }
-    const p = pManifest[file];
+    const p = FULL_RES_FIRST.has(file) ? null : pManifest[file];
     loader.load(
       (p ? asset('textures/preview/' + p.p) : asset('textures/' + file)) +
         ((p?.ph || p?.h || manifest[file]?.h)
@@ -216,7 +220,7 @@ async function loadTextures(onProgress, onBgProgress) {
       (tex) => {
         if (settled) { tex.dispose(); return; }
         tex.colorSpace = THREE.SRGBColorSpace;
-        tex.anisotropy = QUALITY.anisotropy;
+        tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
         cache.set(file, tex);
         if (p) previewed.add(file);
         finish();
@@ -239,7 +243,7 @@ async function loadTextures(onProgress, onBgProgress) {
       const canvas=document.createElement('canvas');canvas.width=canvas.height=2;
       texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
     }
-    texture.anisotropy=QUALITY.anisotropy;cache.set(file,texture);previewed.add(file);
+    texture.anisotropy=renderer.capabilities.getMaxAnisotropy();cache.set(file,texture);previewed.add(file);
   }
 
   const files = [...previewed].sort((a, b) => priorityOf(a) - priorityOf(b));
@@ -376,8 +380,25 @@ function haloPressureValues(pressureAtm) {
   const normalized = (Math.log10(pressure) + 3) / 5;
   return {
     opacity: 0.05 + normalized * 0.7,
-    shellScale: 1.03 + normalized * 0.15,
+    shellScale: 1.014 + normalized * 0.15,
   };
+}
+
+function nativeHaloValues(id, pressureAtm) {
+  const opacity = {
+    mercury: 0, moon: 0, mars: 0.06, earth: 0.18, venus: 0.14,
+    jupiter: 0.04, saturn: 0.04, uranus: 0.07, neptune: 0.07,
+  }[id];
+  if (opacity !== undefined) return { opacity, shellScale: 1.008 };
+  return haloPressureValues(pressureAtm);
+}
+
+function nativeHaloTint(id, phys) {
+  const colors = {
+    mars: '#d97745', earth: '#38bdf8', venus: '#fde68a',
+    jupiter: '#d6b57c', saturn: '#d8c58f', uranus: '#67e8f9', neptune: '#3b82f6',
+  };
+  return colors[id] ? new THREE.Color(colors[id]) : nativeHaloColor(phys);
 }
 
 function nativeHaloColor(phys) {
@@ -407,16 +428,21 @@ function createTerraformHaloMaterial(color, opacity) {
       uColor: { value: color.clone() },
       uOpacity: { value: opacity },
       uFresnelPower: { value: 2.4 },
+      uSunDirection: { value: new THREE.Vector3(1, 0, 0) },
     },
     vertexShader: /* glsl */ `
       #include <common>
       #include <logdepthbuf_pars_vertex>
       varying vec3 vNormalView;
       varying vec3 vViewDirection;
+      varying vec3 vWorldNormal;
+      varying vec3 vWorldPosition;
       void main() {
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         vNormalView = normalize(normalMatrix * normal);
         vViewDirection = normalize(-mvPosition.xyz);
+        vWorldNormal = normalize(mat3(modelMatrix) * normal);
+        vWorldPosition = (modelMatrix * vec4(position, 1.0)).xyz;
         gl_Position = projectionMatrix * mvPosition;
         #include <logdepthbuf_vertex>
       }
@@ -427,15 +453,19 @@ function createTerraformHaloMaterial(color, opacity) {
       uniform vec3 uColor;
       uniform float uOpacity;
       uniform float uFresnelPower;
+      uniform vec3 uSunDirection;
       varying vec3 vNormalView;
       varying vec3 vViewDirection;
+      varying vec3 vWorldNormal;
+      varying vec3 vWorldPosition;
       void main() {
         #include <logdepthbuf_fragment>
         float fresnel = pow(
           1.0 - max(dot(normalize(vNormalView), normalize(vViewDirection)), 0.0),
           uFresnelPower
         );
-        float alpha = fresnel * uOpacity;
+        float sunlitRim = smoothstep(-0.1, 0.5, dot(normalize(vWorldNormal), normalize(uSunDirection)));
+        float alpha = fresnel * uOpacity * sunlitRim;
         gl_FragColor = vec4(uColor, alpha);
       }
     `,
@@ -443,7 +473,7 @@ function createTerraformHaloMaterial(color, opacity) {
     transparent: true,
     depthTest: true,
     depthWrite: false,
-    blending: THREE.AdditiveBlending,
+    blending: THREE.NormalBlending,
     toneMapped: false,
     fog: false,
   });
@@ -456,7 +486,7 @@ function detailModeOf(phys) {
   return phys.landable ? 1 : 0;
 }
 
-export async function buildSolarSystem(scene, world, onProgress, onBgProgress) {
+export async function buildSolarSystem(scene, world, onProgress, onBgProgress, renderer) {
   // EnglishEnglishEnglishEnglishEnglish main.js English URL EnglishEnglish（?noatmo=1 EnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish）
   const skipAtmo = !!globalThis.__noAtmo;
   // EnglishEnglishEnglishEnglishEnglishEnglishEnglish（PDS Thomas EnglishEnglishEnglishEnglish）：EnglishEnglishEnglishEnglishEnglishEnglish**EnglishEnglish**EnglishEnglish，EnglishEnglish
@@ -467,7 +497,7 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress) {
     const n = await loadShapeModels(shapeIds, asset(''));
     if (n) console.log(`[shapes] EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish ${n}/${shapeIds.length}`);
   }
-  const { cache, upgrades, boost } = await loadTextures(onProgress, onBgProgress);
+  const { cache, upgrades, boost } = await loadTextures(renderer, onProgress, onBgProgress);
   const bodies = new Map();
   const orbitLines = new THREE.Group();
   scene.add(orbitLines);
@@ -564,7 +594,7 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress) {
     // EnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglish）EnglishEnglishEnglishEnglishEnglishEnglishEnglish——EnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglish。
     // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish radiusKm EnglishEnglishEnglishEnglishEnglishEnglishEnglish，English bodies.js EnglishEnglish「EnglishEnglishEnglishEnglish」。
     if (!phys.landable) {
-      const sy = 1 - (phys.oblateness ?? 0);
+      const sy = id === 'jupiter' ? 0.935 : id === 'saturn' ? 0.902 : 1 - (phys.oblateness ?? 0);
       mesh.scale.y = sy;
       // EnglishEnglishEnglishEnglishEnglishEnglish：y EnglishEnglishEnglishEnglish sy → EnglishEnglishEnglishEnglishEnglishEnglishEnglish y EnglishEnglishEnglishEnglishEnglish sy
       const u = mat.userData.uniforms;
@@ -579,8 +609,8 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress) {
     };
 
     if (!skipAtmo) {
-      const defaults = haloPressureValues(HALO_DEFAULT_PRESSURE_ATM[id]);
-      const color = nativeHaloColor(phys);
+      const defaults = nativeHaloValues(id, HALO_DEFAULT_PRESSURE_ATM[id]);
+      const color = nativeHaloTint(id, phys);
       const haloMat = createTerraformHaloMaterial(color, defaults.opacity);
       const halo = new THREE.Mesh(terraformHaloGeometry, haloMat);
       halo.name = `${id}-terraform-atmosphere-halo`;
@@ -861,6 +891,9 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress) {
           const ringOpacity = e.phys.rings.opacity ?? 1;
           e.mat.userData.uniforms.uRingShine.value = 0.09 * ringOpacity * sunI;
         }
+      }
+      if (e.terraformHaloMesh) {
+        e.terraformHaloMesh.material.uniforms.uSunDirection.value.copy(_sunDir);
       }
       if (e.cloudMat) {
         const u = e.cloudMat.userData.uniforms;

@@ -89,7 +89,9 @@ const BODY_GRADE = {
   // EnglishEnglishEnglish sat English**EnglishEnglishEnglish**EnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglish/EnglishEnglishEnglishEnglishEnglish），EnglishEnglishEnglish
   // "EnglishEnglish R−B EnglishEnglishEnglishEnglishEnglishEnglishEnglish"EnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglish。
   jupiter: { sat: 1.35 },
-  uranus:  { grade: [1.50, 1.65, 1.70] },          // EnglishEnglish（EnglishEnglishEnglish 2 EnglishEnglishEnglish）
+  // Voyager 2's pale cyan disk should retain tonal range; avoid the previous
+  // channel lift, which clipped the methane cloud deck toward white.
+  uranus:  { grade: [0.92, 1.02, 1.08], sat: 0.92 },
   // Oxford/Irwin 2024: Neptune is pale green-blue, not enhanced Voyager blue.
   // Approximate display correction of this legacy map; not spectral calibration.
   // dim English**EnglishEnglishEnglish**EnglishEnglish（EnglishEnglishEnglishEnglishEnglish）：EnglishEnglishEnglishEnglishEnglishEnglish 0.442 EnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglish
@@ -241,6 +243,7 @@ export function createPlanetMaterial({
   const hp = HAPKE_PARAMS[bodyId] ?? null;
   const uniforms = {
     uMap: { value: map },
+    uBumpScale: { value: ['mars', 'mercury', 'moon'].includes(bodyId) ? 0.025 : 0 },
     uNight: { value: nightMap ?? DUMMY_TEX },
     uHasNight: { value: nightMap ? 1 : 0 },
     uOcean: { value: oceanSpec ? 1 : 0 },
@@ -329,6 +332,7 @@ export function createPlanetMaterial({
       #include <common>
       #include <logdepthbuf_pars_fragment>
       uniform sampler2D uMap;
+      uniform float uBumpScale;
       uniform sampler2D uNight;
       uniform int uHasNight;
       uniform int uOcean;
@@ -394,8 +398,14 @@ ${CLOUD_GLSL}
 
       void main() {
         #include <logdepthbuf_fragment>
-        vec3 n = normalize(vNormalW);
         vec3 albedo = texture2D(uMap, vUv).rgb;
+        vec3 n = normalize(vNormalW);
+        if (uBumpScale > 0.0) {
+          float h = dot(albedo, vec3(0.299, 0.587, 0.114));
+          vec3 dpdx = dFdx(vPosW), dpdy = dFdy(vPosW);
+          float dhdx = dFdx(h), dhdy = dFdy(h);
+          n = normalize(n - uBumpScale * (dhdx * dpdx + dhdy * dpdy));
+        }
         float app = uRadius / max(length(vPosW), uRadius); // EnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglish）
         // EnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish，EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish）
         if (uDetailMode > 0) {
