@@ -83,7 +83,6 @@ export function mountPlanetAssistant(flyTo) {
       fly.textContent = `🚀 Fly Camera to ${name}`;
       fly.onclick = () => {
         const target = answer.targetPlanet;
-        setOpen(false);
         flyTo(target);
       };
     }
