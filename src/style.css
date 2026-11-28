@@ -1508,12 +1508,18 @@ body.walk-mode::after {
 }
 #ai-planet-assistant .planet-guide-panel[hidden] { display: none; }
 .planet-guide-header { display:flex; justify-content:space-between; align-items:center; padding:13px 15px; border-bottom:1px solid rgba(56,189,248,.14); }
+.planet-guide-header-actions { display:flex; align-items:center; gap:7px; }
 .planet-guide-kicker { color:#75c9e8; font-size:9px; font-weight:700; letter-spacing:1.25px; }
 .planet-guide-header h2 { margin-top:3px; font-size:16px; color:#f0f7ff; }
 .planet-guide-close { width:32px; height:32px; border:1px solid rgba(129,188,232,.28); border-radius:9px; background:rgba(68,122,170,.16); color:#e6f4ff; font-size:22px; cursor:pointer; }
+.planet-guide-voice { min-height:32px; padding:0 9px; border:1px solid rgba(56,189,248,.26); border-radius:9px; background:rgba(8,39,58,.62); color:#bfeeff; font:inherit; font-size:10px; white-space:nowrap; cursor:pointer; }
+.planet-guide-voice:hover, .planet-guide-close:hover { border-color:rgba(56,189,248,.58); background:rgba(8,60,82,.7); }
 .planet-guide-messages { flex:1; min-height:0; overflow:auto; padding:12px; display:flex; flex-direction:column; gap:9px; scrollbar-color:rgba(56,189,248,.3) transparent; }
 .planet-guide-message { white-space:pre-wrap; padding:10px 11px; border-radius:11px; font-size:12px; line-height:1.55; }
 .planet-guide-message.assistant { align-self:stretch; color:#d8e8f5; background:rgba(13,25,42,.74); border:1px solid rgba(120,170,210,.12); }
+.planet-guide-reply-text { display:block; }
+.planet-guide-replay { margin-top:7px; padding:3px 7px; border:1px solid rgba(56,189,248,.18); border-radius:7px; background:rgba(5,30,45,.64); color:#8fd9ef; font:inherit; font-size:10px; cursor:pointer; }
+.planet-guide-replay:hover { border-color:rgba(56,189,248,.5); color:#d2f7ff; }
 .planet-guide-message.user { align-self:flex-end; max-width:90%; color:#d9f6ff; background:rgba(8,82,113,.32); border:1px solid rgba(56,189,248,.2); }
 .planet-guide-starters, .planet-guide-followups { display:flex; flex-wrap:wrap; gap:6px; padding:0 12px 9px; }
 .planet-guide-followups { padding:0; }
