@@ -1460,6 +1460,76 @@ body.walk-mode::after {
   -webkit-user-select: text;
   pointer-events: auto;
 }
+
+/* ---------- AI Planetary Knowledge Assistant ---------- */
+#ai-planet-assistant {
+  --guide-cyan: rgba(56, 189, 248, 0.25);
+  position: fixed;
+  left: 16px;
+  bottom: 76px;
+  z-index: 37;
+  width: min(390px, calc(100vw - 32px));
+  color: #dceaff;
+  font-family: inherit;
+  pointer-events: auto;
+  user-select: text;
+  -webkit-user-select: text;
+}
+#ai-planet-assistant .planet-guide-toggle,
+#ai-planet-assistant .planet-guide-panel {
+  border: 1px solid var(--guide-cyan);
+  background: rgba(3, 6, 15, 0.90);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.46), inset 0 1px rgba(255,255,255,.05);
+}
+#ai-planet-assistant .planet-guide-toggle {
+  min-height: 42px;
+  padding: 0 15px;
+  border-radius: 999px;
+  color: #c9f2ff;
+  font: 600 13px inherit;
+  cursor: pointer;
+}
+#ai-planet-assistant .planet-guide-toggle:hover { border-color: rgba(56,189,248,.55); background: rgba(7,17,31,.96); }
+#ai-planet-assistant .planet-guide-panel {
+  position: absolute;
+  left: 0;
+  bottom: 52px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: min(520px, calc(100dvh - 150px));
+  min-height: 300px;
+  overflow: hidden;
+  border-radius: 16px;
+}
+#ai-planet-assistant .planet-guide-panel[hidden] { display: none; }
+.planet-guide-header { display:flex; justify-content:space-between; align-items:center; padding:13px 15px; border-bottom:1px solid rgba(56,189,248,.14); }
+.planet-guide-kicker { color:#75c9e8; font-size:9px; font-weight:700; letter-spacing:1.25px; }
+.planet-guide-header h2 { margin-top:3px; font-size:16px; color:#f0f7ff; }
+.planet-guide-close { width:32px; height:32px; border:1px solid rgba(129,188,232,.28); border-radius:9px; background:rgba(68,122,170,.16); color:#e6f4ff; font-size:22px; cursor:pointer; }
+.planet-guide-messages { flex:1; min-height:0; overflow:auto; padding:12px; display:flex; flex-direction:column; gap:9px; scrollbar-color:rgba(56,189,248,.3) transparent; }
+.planet-guide-message { white-space:pre-wrap; padding:10px 11px; border-radius:11px; font-size:12px; line-height:1.55; }
+.planet-guide-message.assistant { align-self:stretch; color:#d8e8f5; background:rgba(13,25,42,.74); border:1px solid rgba(120,170,210,.12); }
+.planet-guide-message.user { align-self:flex-end; max-width:90%; color:#d9f6ff; background:rgba(8,82,113,.32); border:1px solid rgba(56,189,248,.2); }
+.planet-guide-starters, .planet-guide-followups { display:flex; flex-wrap:wrap; gap:6px; padding:0 12px 9px; }
+.planet-guide-followups { padding:0; }
+.planet-guide-chip { border:1px solid rgba(56,189,248,.2); border-radius:999px; padding:6px 9px; background:rgba(8,31,49,.75); color:#a9dff2; font:inherit; font-size:10px; cursor:pointer; }
+.planet-guide-chip:hover { border-color:rgba(56,189,248,.5); background:rgba(10,53,77,.82); }
+.planet-guide-fly { margin:0 12px 9px; padding:9px 11px; border:1px solid rgba(56,189,248,.35); border-radius:9px; background:rgba(5,66,91,.38); color:#bff1ff; font:600 12px inherit; text-align:left; cursor:pointer; }
+.planet-guide-fly[hidden] { display:none; }
+.planet-guide-form { display:flex; gap:7px; padding:10px 12px 12px; border-top:1px solid rgba(56,189,248,.14); }
+.planet-guide-form input { min-width:0; flex:1; height:38px; padding:0 10px; border:1px solid rgba(120,170,210,.2); border-radius:9px; outline:none; background:rgba(12,22,37,.85); color:#e8f4ff; font:inherit; font-size:12px; }
+.planet-guide-form input:focus { border-color:rgba(56,189,248,.58); }
+.planet-guide-form button { padding:0 13px; border:1px solid rgba(56,189,248,.35); border-radius:9px; background:rgba(8,82,113,.38); color:#c9f2ff; font:600 12px inherit; cursor:pointer; }
+@media (max-width: 768px) {
+  #ai-planet-assistant { left:12px; bottom:72px; width:min(420px, calc(100vw - 24px)); }
+  #ai-planet-assistant.open .planet-guide-toggle { display:none; }
+  #ai-planet-assistant.open { z-index:60; }
+  #ai-planet-assistant .planet-guide-panel { position:fixed; left:8px; right:8px; bottom:8px; width:auto; height:min(68dvh, 560px); min-height:280px; border-radius:16px; }
+  #ai-planet-assistant:not(.open) .planet-guide-toggle { min-height:38px; padding:0 12px; font-size:12px; }
+}
 #ai-astro-lab .ai-lab-panel {
   display: flex;
   flex-direction: column;

@@ -57,6 +57,7 @@ import { createEphemerisLoader } from './engine/ephemerisLoader.js';
 import { createCameraFeel } from './engine/cameraFeel.js';
 import { bootstrapRenderer } from './engine/rendererBootstrap.js';
 import { mountAstrobiologyLab } from './ui/astroLab.js';
+import { mountPlanetAssistant } from './ui/planetAssistant.js';
 import { createTerraformingOverlays } from './scene/terraformingOverlays.js';
 import { createCosmicMotion } from './scene/cosmicMotion.js';
 import { CosmicAudio, normalizePlanetProximity } from './audio/cosmicAudio.ts';
@@ -75,6 +76,7 @@ let cosmicMotion = null;
 let observerBeacon = null;
 let observerUi = null;
 let astroLabUi = null;
+let planetAssistantUi = null;
 let touchControls = null;
 let observerFocusTween = null;
 let universeMotionEnabled = true;
@@ -189,6 +191,7 @@ window.addEventListener('mobile-drawer-change', event => {
 });
 
 astroLabUi = mountAstrobiologyLab();
+planetAssistantUi = mountPlanetAssistant((id) => flyTo(id));
 
 const renderBoot = await bootstrapRenderer({
   canvas: document.getElementById('app'), create: options => new THREE.WebGLRenderer(options),
