@@ -77,6 +77,7 @@ let observerBeacon = null;
 let observerUi = null;
 let astroLabUi = null;
 let planetAssistantUi = null;
+let planetGuideFlyTo = null;
 let touchControls = null;
 let observerFocusTween = null;
 let universeMotionEnabled = true;
@@ -191,7 +192,7 @@ window.addEventListener('mobile-drawer-change', event => {
 });
 
 astroLabUi = mountAstrobiologyLab();
-planetAssistantUi = mountPlanetAssistant((id) => flyTo(id));
+planetAssistantUi = mountPlanetAssistant((id) => planetGuideFlyTo?.(id));
 
 const renderBoot = await bootstrapRenderer({
   canvas: document.getElementById('app'), create: options => new THREE.WebGLRenderer(options),
@@ -578,6 +579,7 @@ async function init() {
   // ---- URL hash EnglishEnglish（#1）：EnglishEnglishEnglishEnglishEnglish；Ctrl+L EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish ----
   applyLocationHash();
   window.addEventListener('keydown', (e) => {
+    if (e.target?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
     if ((e.ctrlKey || e.metaKey) && e.code === 'KeyL' && !e.shiftKey) {
       e.preventDefault(); // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish
       copyShareUrl();
@@ -666,6 +668,7 @@ async function init() {
 
   // EnglishEnglishEnglishEnglishEnglish：C EnglishEnglishEnglish、M EnglishEnglish、Ctrl+B EnglishEnglishEnglishEnglish、Ctrl+Shift+B EnglishEnglishEnglishEnglishEnglishEnglish、Y EnglishEnglishEnglishEnglishEnglishEnglish（EnglishEnglishEnglishEnglish）
   window.addEventListener('keydown', (e) => {
+    if (e.target?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
     if (e.code === 'KeyC' && !e.repeat) { e.preventDefault(); compass?.toggle(); }
     if (e.code === 'KeyM' && !e.repeat) {
       e.preventDefault();
@@ -701,6 +704,7 @@ async function init() {
     }
   } catch { /* English location EnglishEnglish */ }
 
+  planetGuideFlyTo = flyTo;
   window.__game = { get __nearest() { return nearestCache; }, ship, simClock, overlayScene, overlayCam, cockpit, shipModel, select, flyTo, orbitCam, orbitEnv, builder, registry, input, terrainMgr, camera, getMode: () => appMode, setOrbitLinesVisible: (v) => { orbitLinesOn = v; }, audioEngine, compass, scaleRef, bookmarks, tourSystem, narrator, teacherToolkit, eclipseSystem, webxr, smallBodies, quality: QUALITY, ephemerisLoader, renderer, composer, apolloLandmarks, roverSites, sky, labels, tnoScene, comets, oortCloud };
   window.__planetAssistantContext = () => {
     const labValue = (id) => document.getElementById(id)?.textContent?.trim() ?? '';
@@ -1740,12 +1744,13 @@ let tnoOrbitsOn = false;
 let directoryTabKeyBound = false;
 
 function handleUIKeys() {
+  if (document.activeElement?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
   if (!directoryTabKeyBound) {
     directoryTabKeyBound = true;
     window.addEventListener('keydown', (e) => {
       if (e.code !== 'Tab' || e.repeat) return;
       const t = e.target;
-      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+      if (t?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
       e.preventDefault();
       document.querySelector('#directory')?.classList.toggle('open');
     });

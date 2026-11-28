@@ -127,6 +127,9 @@ function currentTelemetry(target:string,ctx:any):string {
 
 export function answerPlanetQuestion(question: string): PlanetAssistantAnswer {
   const q=question.trim().toLowerCase(); const ctx=liveContext();
+  if (/^(hi|hello|hey|hiya|good morning|good afternoon|good evening)[!.?\s]*$/.test(q)) {
+    return { reply:'Hi! Ask me about a planet, moon, live simulation telemetry, or how the observatory works.', followUps:[] };
+  }
   const target=detectBody(q);
   const focused=ctx.focusedBody&&CELESTIAL_KNOWLEDGE[ctx.focusedBody]?ctx.focusedBody:undefined;
   const activeTarget=target??focused;
@@ -184,6 +187,5 @@ export function answerPlanetQuestion(question: string): PlanetAssistantAnswer {
     if(/gravity|orbit|escape|core|tilt|year|structure|diameter|mass|density|day|spin/.test(q))return {reply:profileReply(activeTarget),targetPlanet:activeTarget,followUps:followups(FOLLOWUPS.general)};
     return {reply:profileReply(activeTarget),targetPlanet:activeTarget,followUps:followups(FOLLOWUPS.general)};
   }
-  if(focused)return {reply:`I can make a useful start from the current focus, ${CELESTIAL_KNOWLEDGE[focused].name}. ${profileReply(focused)} You can ask about its current telemetry, orbit, atmosphere, interior, habitability, or compare it with another body.`,targetPlanet:focused,followUps:followups(FOLLOWUPS.general)};
-  return {reply:'I can help with Solar System worlds, live telemetry, observatory state, habitability, orbital physics, and how this digital twin works. Try “What am I looking at?”, “How far is Mars right now?”, “Explain vis-viva”, or “Compare Europa and Enceladus.”',targetPlanet:'earth',followUps:followups(FOLLOWUPS.project)};
+  return {reply:'I can help with Solar System worlds, live telemetry, observatory state, habitability, orbital physics, and how this digital twin works. Name a body or ask a specific question, and I’ll find the closest topic I can answer.',targetPlanet:target,followUps:followups(FOLLOWUPS.project)};
 }
