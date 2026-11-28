@@ -276,6 +276,7 @@ export function createPlanetMaterial({
     // EnglishEnglishEnglishEnglishEnglishEnglishEnglish（BODY_GRADE English；EnglishEnglish = EnglishEnglishEnglish）
     // EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish（DISPLAY_GRADE EnglishEnglishEnglishEnglishEnglishEnglish）
     uGrade: { value: new THREE.Vector3(...(DISPLAY_GRADE[bodyId]?.grade ?? [1, 1, 1])) },
+    uAlbedoTint: { value: new THREE.Color(bodyId === 'uranus' ? '#67d4e8' : '#ffffff') },
     uInvScaleY: { value: 1 },
     uDetailScaleN: { value: Math.min(1, radiusKm / 400) },
     // Hapke EnglishEnglishEnglishEnglishEnglish：English shade EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish 2/3，
@@ -356,6 +357,7 @@ export function createPlanetMaterial({
       uniform sampler2D uCloudTex;
       uniform int uHasClouds;
       uniform vec3 uGrade;
+      uniform vec3 uAlbedoTint;
       uniform float uInvScaleY;
       uniform float uDetailScaleN;
       uniform float uHapkeNorm;
@@ -398,7 +400,7 @@ ${CLOUD_GLSL}
 
       void main() {
         #include <logdepthbuf_fragment>
-        vec3 albedo = texture2D(uMap, vUv).rgb;
+        vec3 albedo = texture2D(uMap, vUv).rgb * uAlbedoTint;
         vec3 n = normalize(vNormalW);
         if (uBumpScale > 0.0) {
           float h = dot(albedo, vec3(0.299, 0.587, 0.114));

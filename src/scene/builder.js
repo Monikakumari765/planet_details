@@ -645,7 +645,21 @@ export async function buildSolarSystem(scene, world, onProgress, onBgProgress, r
       entry.atmoMesh = atmo;
     }
 
-    if (phys.rings) {
+    if (id === 'uranus') {
+      // The ring mesh is a child of the tilted body mesh, so its plane stays
+      // perpendicular to Uranus's IAU pole as the planet rotates.
+      const ringGeo = new THREE.RingGeometry(phys.radiusKm * 1.64, phys.radiusKm * 2.02, 192);
+      ringGeo.rotateX(Math.PI / 2);
+      const ringMat = new THREE.MeshStandardMaterial({
+        color: '#94a3b8', roughness: 0.9, metalness: 0,
+        transparent: true, opacity: 0.24, side: THREE.DoubleSide,
+        depthWrite: false, emissive: new THREE.Color(0x000000), emissiveIntensity: 0,
+      });
+      const rings = new THREE.Mesh(ringGeo, ringMat);
+      rings.name = 'uranus-subtle-rings';
+      mesh.add(rings);
+      entry.ringMesh = rings;
+    } else if (phys.rings) {
       const rtex = phys.rings.texture ? cache.get(phys.rings.texture) ?? null : null;
       const rings = createRings(phys, rtex);
       mesh.add(rings);
