@@ -1,5 +1,5 @@
 import { answerPlanetQuestion } from '../ai/planetAssistant.ts';
-import { isVoiceEnabled, setVoiceEnabled, speakText, stopSpeaking } from '../ai/voiceNarrator.ts';
+import { isVoiceEnabled, onVoiceStateChange, setVoiceEnabled, speakText, stopSpeaking, togglePlayPauseSpeech } from '../ai/voiceNarrator.ts';
 
 const STARTERS = ['Live Mars distance?', 'Could life exist on Europa?', 'Compare Earth vs Venus', 'Why is Saturn tilted?'];
 
@@ -13,7 +13,7 @@ export function mountPlanetAssistant(flyTo) {
       <div class="planet-guide-messages" aria-live="polite"><div class="planet-guide-message assistant">Ask about worlds, weather, orbital physics, or habitability across the Solar System.</div></div>
       <div class="planet-guide-starters" aria-label="Starter questions"></div>
       <button class="planet-guide-fly" type="button" hidden></button>
-      <form class="planet-guide-form"><input aria-label="Ask a planetary science question" placeholder="Ask the planetary guide…" autocomplete="off" /><button type="submit">Send</button></form>
+      <form class="planet-guide-form"><input aria-label="Ask a planetary science question" placeholder="Ask the planetary guide…" autocomplete="off" /><button class="planet-guide-playback" type="button" title="Start / Resume Voice" aria-label="Start Voice"><svg class="planet-guide-play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><svg class="planet-guide-pause-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1" fill="currentColor"/></svg></button><button class="planet-guide-send" type="submit">Send</button></form>
     </section>`;
 
   const toggle = root.querySelector('.planet-guide-toggle');
@@ -23,6 +23,7 @@ export function mountPlanetAssistant(flyTo) {
   const input = form.querySelector('input');
   const fly = root.querySelector('.planet-guide-fly');
   const voiceButton = root.querySelector('.planet-guide-voice');
+  const playbackButton = root.querySelector('.planet-guide-playback');
   const updateVoiceButton = () => {
     const enabled = isVoiceEnabled();
     voiceButton.textContent = enabled ? '🔊 Voice: ON' : '🔇 Voice: OFF';
@@ -30,6 +31,17 @@ export function mountPlanetAssistant(flyTo) {
     voiceButton.title = enabled ? 'Turn voice narration off' : 'Turn voice narration on';
   };
   updateVoiceButton();
+  const updatePlaybackButton = (state) => {
+    const speaking = state === 'speaking';
+    playbackButton.classList.toggle('is-speaking', speaking);
+    playbackButton.title = speaking ? 'Pause Voice' : 'Start / Resume Voice';
+    playbackButton.setAttribute('aria-label', speaking ? 'Pause Voice' : 'Start Voice');
+  };
+  const unsubscribeVoiceState = onVoiceStateChange((state) => {
+    updatePlaybackButton(state);
+    updateVoiceButton();
+  });
+  playbackButton.addEventListener('click', togglePlayPauseSpeech);
   const setOpen = (open) => {
     if (!open) stopSpeaking();
     root.classList.toggle('open', open);
@@ -88,5 +100,5 @@ export function mountPlanetAssistant(flyTo) {
 
   root.querySelectorAll('.planet-guide-starters .planet-guide-chip').forEach((chip) => chip.addEventListener('click', () => ask(chip.textContent)));
   form.addEventListener('submit', (event) => { event.preventDefault(); ask(input.value); input.value = ''; });
-  return { collapse: () => setOpen(false) };
+  return { collapse: () => setOpen(false), destroy: unsubscribeVoiceState };
 }

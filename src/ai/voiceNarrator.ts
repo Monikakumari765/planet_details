@@ -1,5 +1,15 @@
 let voiceEnabled = true;
 let preferredVoice: SpeechSynthesisVoice | null = null;
+export let lastSpokenText = '';
+let voiceState: 'speaking' | 'paused' | 'idle' = 'idle';
+let activeUtterance: SpeechSynthesisUtterance | null = null;
+const voiceStateListeners = new Set<(state: 'speaking' | 'paused' | 'idle') => void>();
+export const WELCOME_VOICE_PROMPT = 'Ask about worlds, weather, orbital physics, or habitability across the Solar System.';
+
+function emitVoiceState(state: 'speaking' | 'paused' | 'idle') {
+  voiceState = state;
+  for (const listener of voiceStateListeners) listener(state);
+}
 
 function speechApi(): SpeechSynthesis | null {
   return typeof window !== 'undefined' && 'speechSynthesis' in window
@@ -76,17 +86,25 @@ export function speakText(text: string): void {
   const synth = speechApi();
   if (!voiceEnabled || !synth || !text.trim()) return;
   synth.cancel();
+  activeUtterance = null;
+  lastSpokenText = text;
   chooseVoice();
   const utterance = new SpeechSynthesisUtterance(cleanSpeechText(text));
   if (preferredVoice) utterance.voice = preferredVoice;
   utterance.lang = preferredVoice?.lang || 'en-US';
   utterance.pitch = 1.06;
   utterance.rate = 0.98;
+  activeUtterance = utterance;
+  utterance.onend = () => { if (activeUtterance === utterance) { activeUtterance = null; emitVoiceState('idle'); } };
+  utterance.onerror = () => { if (activeUtterance === utterance) { activeUtterance = null; emitVoiceState('idle'); } };
   synth.speak(utterance);
+  emitVoiceState('speaking');
 }
 
 export function stopSpeaking(): void {
   speechApi()?.cancel();
+  activeUtterance = null;
+  emitVoiceState('idle');
 }
 
 export function isVoiceEnabled(): boolean {
@@ -96,4 +114,32 @@ export function isVoiceEnabled(): boolean {
 export function setVoiceEnabled(enabled: boolean): void {
   voiceEnabled = Boolean(enabled);
   if (!voiceEnabled) stopSpeaking();
+}
+
+export function onVoiceStateChange(callback: (state: 'speaking' | 'paused' | 'idle') => void): () => void {
+  voiceStateListeners.add(callback);
+  callback(voiceState);
+  return () => voiceStateListeners.delete(callback);
+}
+
+export function togglePlayPauseSpeech(): void {
+  const synth = speechApi();
+  if (!synth) { emitVoiceState('idle'); return; }
+  if (synth.speaking && !synth.paused) {
+    synth.pause();
+    emitVoiceState('paused');
+    return;
+  }
+  if (synth.paused) {
+    synth.resume();
+    emitVoiceState('speaking');
+    return;
+  }
+  // An explicit play action also re-enables voice after the user turned autoplay off.
+  voiceEnabled = true;
+  speakText(lastSpokenText || WELCOME_VOICE_PROMPT);
+}
+
+export function getLastSpokenText(): string {
+  return lastSpokenText;
 }
