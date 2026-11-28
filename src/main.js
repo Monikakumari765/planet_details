@@ -702,6 +702,36 @@ async function init() {
   } catch { /* English location EnglishEnglish */ }
 
   window.__game = { get __nearest() { return nearestCache; }, ship, simClock, overlayScene, overlayCam, cockpit, shipModel, select, flyTo, orbitCam, orbitEnv, builder, registry, input, terrainMgr, camera, getMode: () => appMode, setOrbitLinesVisible: (v) => { orbitLinesOn = v; }, audioEngine, compass, scaleRef, bookmarks, tourSystem, narrator, teacherToolkit, eclipseSystem, webxr, smallBodies, quality: QUALITY, ephemerisLoader, renderer, composer, apolloLandmarks, roverSites, sky, labels, tnoScene, comets, oortCloud };
+  window.__planetAssistantContext = () => {
+    const labValue = (id) => document.getElementById(id)?.textContent?.trim() ?? '';
+    const lab = document.getElementById('ai-lab-planet') ? {
+      planetId: document.getElementById('ai-lab-planet').value,
+      planet: document.querySelector('#ai-lab-planet option:checked')?.textContent ?? 'unknown world',
+      orbitalAU: labValue('ai-lab-orbit-value'), pressureAtm: labValue('ai-lab-pressure-value'),
+      co2Pct: labValue('ai-lab-co2-value'), oxygenPct: labValue('ai-lab-oxygen-value'),
+      temperatureK: labValue('ai-lab-temperature'), esi: labValue('ai-lab-esi'), probability: labValue('ai-lab-probability'),
+    } : null;
+    const coordinates = observerUi?.getCoordinates?.();
+    const observer = coordinates ? {
+      pinned: true, latitude: coordinates.latitude, longitude: coordinates.longitude,
+      targetPlanet: observerUi.getTargetPlanet?.(),
+      targetName: document.getElementById('observer-target-name')?.textContent?.trim(),
+      skyStatus: document.getElementById('observer-sky-status')?.textContent?.trim(),
+      altitude: document.getElementById('observer-altitude')?.textContent?.trim(),
+    } : { pinned: false };
+    const simulationDate = simClock.toDate();
+    const focusedBody = orbitCam.focusId ?? selectedId;
+    const focusedEntry = focusedBody ? registry.get(focusedBody) : null;
+    return {
+      focusedBody,
+      focusedName: focusedEntry?.nameEn ?? focusedEntry?.nameZh ?? focusedBody,
+      focusedDescription: focusedEntry?.desc,
+      selectedBody: selectedId,
+      simulationTime: simulationDate.toISOString(), date: simulationDate,
+      timeWarp: simClock.rate, paused: simClock.paused,
+      astrobiologyLab: lab, observer,
+    };
+  };
   renderer.setAnimationLoop(loop);
 
   // ── EnglishEnglishEnglishEnglish：EnglishEnglish/EnglishEnglishEnglishEnglish/EnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglishEnglish ──

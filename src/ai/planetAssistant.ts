@@ -7,11 +7,45 @@ export interface PlanetAssistantAnswer {
   followUps: string[];
 }
 
+export interface CelestialProfile {
+  name: string; kind: 'star' | 'planet' | 'dwarf planet' | 'moon'; parent?: string;
+  diameterKm: number; massKg: number; gravityMps2: number; gravityG: number; escapeKmS: number; densityGcm3: number;
+  semiMajorAxisAU: number; orbitalPeriod: string; orbitalSpeedKmS: number; dayLength: string; axialTiltDeg: number | null; spin: 'prograde' | 'retrograde';
+  atmosphere: string; pressureBar: number; temperatureC: [number, number, number]; temperatureContext?: string;
+  interior: string; system: string; esi: number | null; water: string; biosignatures: string;
+}
+
 const AU_KM = 149_597_870.7;
 const C_KM_S = 299_792.458;
 const NAMES: Record<string, string> = { sun: 'Sun', moon: 'Moon', mercury: 'Mercury', venus: 'Venus', earth: 'Earth', mars: 'Mars', jupiter: 'Jupiter', saturn: 'Saturn', uranus: 'Uranus', neptune: 'Neptune', europa: 'Europa', titan: 'Titan', enceladus: 'Enceladus' };
 const PLANET_GM_KM3_S2: Record<string, number> = { mercury: 22032, venus: 324859, earth: 398600.4418, mars: 42828.375, jupiter: 126686534, saturn: 37931207.8, uranus: 5793939, neptune: 6836529 };
 const PLANET_RADIUS_KM: Record<string, number> = { mercury: 2439.7, venus: 6051.8, earth: 6371, mars: 3389.5, jupiter: 69911, saturn: 58232, uranus: 25362, neptune: 24622 };
+
+// Approximate reference data. Temperatures are representative ranges; giant-planet values refer to cloud tops.
+// ESI is model-dependent and is not a measure of life probability.
+export const CELESTIAL_KNOWLEDGE: Record<string, CelestialProfile> = {
+  sun: { name:'Sun', kind:'star', diameterKm:1392700, massKg:1.9885e30, gravityMps2:274, gravityG:27.96, escapeKmS:617.7, densityGcm3:1.408, semiMajorAxisAU:0, orbitalPeriod:'225–250 million years around the Milky Way', orbitalSpeedKmS:220, dayLength:'about 25 days at equator; differential rotation', axialTiltDeg:7.25, spin:'prograde', atmosphere:'Photosphere: ~73% hydrogen and ~25% helium by mass; remainder heavier elements', pressureBar:0.0001, temperatureC:[-100,5500,15000000], temperatureContext:'photosphere average to core', interior:'Hydrogen-fusing plasma core, radiative zone, convective zone; no solid surface', system:'Eight planets, dwarf planets, rings, moons, asteroids and comets; solar magnetic cycle ~11 years', esi:null, water:'No stable liquid-water surface; trace water exists in the solar atmosphere', biosignatures:'Not applicable; no life evidence' },
+  mercury: { name:'Mercury',kind:'planet',diameterKm:4879,massKg:3.3011e23,gravityMps2:3.70,gravityG:.378,escapeKmS:4.25,densityGcm3:5.43,semiMajorAxisAU:.387,orbitalPeriod:'87.97 days',orbitalSpeedKmS:47.36,dayLength:'58.65 Earth days sidereal; 176-day solar day',axialTiltDeg:.034,spin:'prograde',atmosphere:'Exosphere: oxygen, sodium, hydrogen, helium and potassium traces; no substantial N₂/CO₂ atmosphere',pressureBar:1e-14,temperatureC:[-180,167,430],interior:'Large iron-rich core, silicate mantle and crust',system:'No natural moons or rings; 3:2 spin-orbit resonance; polar shadowed craters may hold ice',esi:.60,water:'Water ice in permanently shadowed polar craters; no stable exposed surface liquid',biosignatures:'None detected' },
+  venus: { name:'Venus',kind:'planet',diameterKm:12104,massKg:4.8675e24,gravityMps2:8.87,gravityG:.904,escapeKmS:10.36,densityGcm3:5.24,semiMajorAxisAU:.723,orbitalPeriod:'224.70 days',orbitalSpeedKmS:35.02,dayLength:'243.02 Earth days sidereal; retrograde',axialTiltDeg:177.36,spin:'retrograde',atmosphere:'~96.5% CO₂, ~3.5% N₂; SO₂, Ar, H₂O and CO traces. A powerful CO₂ greenhouse keeps the surface near 465°C.',pressureBar:92,temperatureC:[460,464,471],interior:'Iron-rich core, rocky silicate mantle and crust; active volcanism is plausible',system:'No moons or rings; thick sulfuric-acid cloud decks and super-rotating winds',esi:.44,water:'No stable surface liquid water; atmospheric water is only trace',biosignatures:'No confirmed biosignature; cloud-life proposals remain speculative' },
+  earth: { name:'Earth',kind:'planet',diameterKm:12742,massKg:5.9722e24,gravityMps2:9.81,gravityG:1,escapeKmS:11.19,densityGcm3:5.51,semiMajorAxisAU:1,orbitalPeriod:'365.256 days',orbitalSpeedKmS:29.78,dayLength:'23 h 56 min sidereal; 24 h mean solar',axialTiltDeg:23.44,spin:'prograde',atmosphere:'Dry air: 78.08% N₂, 20.95% O₂, 0.93% Ar, ~0.042% CO₂; variable H₂O. Natural greenhouse gases warm the mean surface by roughly 33°C versus an airless estimate.',pressureBar:1,temperatureC:[-89.2,15,56.7],interior:'Iron-nickel solid inner core and liquid outer core; silicate mantle and crust',system:'One large Moon; no rings; global magnetosphere and active plate tectonics',esi:1,water:'Stable surface oceans cover ~71%; extensive groundwater and polar ice',biosignatures:'Life is confirmed on Earth; atmospheric O₂/O₃ and CH₄ are biologically influenced' },
+  mars: { name:'Mars',kind:'planet',diameterKm:6779,massKg:6.4171e23,gravityMps2:3.71,gravityG:.379,escapeKmS:5.03,densityGcm3:3.93,semiMajorAxisAU:1.524,orbitalPeriod:'686.98 days',orbitalSpeedKmS:24.07,dayLength:'24 h 37 min sidereal',axialTiltDeg:25.19,spin:'prograde',atmosphere:'~95.3% CO₂, 2.7% N₂, 1.6% Ar, ~0.13% O₂; variable H₂O and trace CH₄',pressureBar:.006,temperatureC:[-125,-65,20],interior:'Iron-sulfur-rich core, silicate mantle and basaltic crust',system:'Two small moons, Phobos and Deimos; no rings; global dust storms and polar caps',esi:.70,water:'Polar and subsurface water ice; ancient surface water; brines may be transient, not confirmed stable',biosignatures:'No confirmed biosignatures; ancient habitability is under study' },
+  jupiter: { name:'Jupiter',kind:'planet',diameterKm:139820,massKg:1.8982e27,gravityMps2:24.79,gravityG:2.53,escapeKmS:59.5,densityGcm3:1.33,semiMajorAxisAU:5.204,orbitalPeriod:'11.86 years',orbitalSpeedKmS:13.07,dayLength:'9 h 55 min; fastest planetary rotation',axialTiltDeg:3.13,spin:'prograde',atmosphere:'~89% H₂ and ~10% He by volume; CH₄, NH₃ and H₂O traces',pressureBar:1,temperatureC:[-160,-110,-100],temperatureContext:'cloud-top levels, not a solid surface',interior:'Molecular then metallic hydrogen envelope over a likely diffuse heavy-element core',system:'115 confirmed moons as of April 2026; four Galilean moons; faint rings; Great Red Spot and intense magnetosphere',esi:null,water:'Water exists in deep clouds; no surface ocean; Europa and Ganymede likely have subsurface oceans',biosignatures:'None detected; icy moons are stronger astrobiology targets' },
+  saturn: { name:'Saturn',kind:'planet',diameterKm:116460,massKg:5.6834e26,gravityMps2:10.44,gravityG:1.065,escapeKmS:35.5,densityGcm3:.687,semiMajorAxisAU:9.583,orbitalPeriod:'29.45 years',orbitalSpeedKmS:9.68,dayLength:'about 10 h 33 min (interior rotation estimate)',axialTiltDeg:26.73,spin:'prograde',atmosphere:'Mostly H₂ and He; ~0.4–0.5% CH₄ with ammonia and other trace gases',pressureBar:1,temperatureC:[-191,-139,-130],temperatureContext:'cloud-top levels, not a solid surface',interior:'Likely heavy-element core, metallic hydrogen and molecular hydrogen envelope',system:'293 confirmed moons as of August 2026; extensive icy rings; Titan, Enceladus and north-polar hexagon',esi:null,water:'Water ice dominates rings and many moons; Enceladus has a subsurface ocean',biosignatures:'None confirmed; Enceladus plume chemistry is a high-priority search target' },
+  uranus: { name:'Uranus',kind:'planet',diameterKm:50724,massKg:8.681e25,gravityMps2:8.69,gravityG:.886,escapeKmS:21.3,densityGcm3:1.27,semiMajorAxisAU:19.19,orbitalPeriod:'84.0 years',orbitalSpeedKmS:6.80,dayLength:'17 h 14 min (retrograde)',axialTiltDeg:97.77,spin:'retrograde',atmosphere:'~82.5% H₂, 15.2% He, 2.3% CH₄ by volume; trace hydrocarbons',pressureBar:1,temperatureC:[-224,-197,-189],temperatureContext:'cloud tops, not a solid surface',interior:'Rocky core, hot dense water-ammonia-methane-rich mantle, H₂/He envelope',system:'28 known moons and 13 narrow rings; extreme sideways seasons',esi:null,water:'Water-rich interior likely; no surface liquid ocean',biosignatures:'None detected' },
+  neptune: { name:'Neptune',kind:'planet',diameterKm:49244,massKg:1.024e26,gravityMps2:11.15,gravityG:1.14,escapeKmS:23.5,densityGcm3:1.64,semiMajorAxisAU:30.07,orbitalPeriod:'164.8 years',orbitalSpeedKmS:5.43,dayLength:'about 16 h 6 min',axialTiltDeg:28.32,spin:'prograde',atmosphere:'~80% H₂, 19% He, ~1–2% CH₄ by volume; trace hydrocarbons',pressureBar:1,temperatureC:[-223,-201,-195],temperatureContext:'cloud tops, not a solid surface',interior:'Rocky core, hot dense water-ammonia-methane-rich mantle, H₂/He envelope',system:'16 known moons, led by Triton; faint rings and supersonic atmospheric winds',esi:null,water:'Water-rich interior likely; no surface liquid ocean',biosignatures:'None detected' },
+  pluto: { name:'Pluto',kind:'dwarf planet',diameterKm:2377,massKg:1.303e22,gravityMps2:.62,gravityG:.063,escapeKmS:1.21,densityGcm3:1.85,semiMajorAxisAU:39.48,orbitalPeriod:'248 years',orbitalSpeedKmS:4.74,dayLength:'6.39 Earth days; retrograde',axialTiltDeg:119.6,spin:'retrograde',atmosphere:'Seasonal thin N₂ atmosphere with CH₄ and CO traces; pressure ~10 microbar near perihelion',pressureBar:1e-5,temperatureC:[-240,-229,-218],interior:'Rock and water-ice interior; possible buried ocean is uncertain',system:'Five moons, including large Charon; no confirmed rings; in 3:2 resonance with Neptune',esi:.075,water:'Water ice crust and possible internal ocean; not surface-liquid stable',biosignatures:'None detected' },
+  ceres: { name:'Ceres',kind:'dwarf planet',diameterKm:939,massKg:9.3835e20,gravityMps2:.27,gravityG:.028,escapeKmS:.51,densityGcm3:2.16,semiMajorAxisAU:2.77,orbitalPeriod:'4.60 years',orbitalSpeedKmS:17.9,dayLength:'9.07 hours',axialTiltDeg:4,spin:'prograde',atmosphere:'Transient water-vapor exosphere; effectively vacuum',pressureBar:0,temperatureC:[-143,-105,-38],interior:'Rocky core with water-rich mantle and icy/salty crust',system:'Largest asteroid-belt object; no known moons or rings; bright salt deposits at Occator',esi:.26,water:'Water ice and hydrated salts; brines may persist underground',biosignatures:'None detected' },
+  eris: { name:'Eris',kind:'dwarf planet',diameterKm:2326,massKg:1.6466e22,gravityMps2:.82,gravityG:.084,escapeKmS:1.38,densityGcm3:2.52,semiMajorAxisAU:67.7,orbitalPeriod:'about 557 years',orbitalSpeedKmS:3.43,dayLength:'25.9 hours (estimated)',axialTiltDeg:null,spin:'prograde',atmosphere:'Likely collapsed/frozen seasonal N₂, CH₄ and CO ice; negligible pressure now',pressureBar:0,temperatureC:[-243,-231,-218],interior:'Rock-rich interior with volatile-ice surface',system:'One moon, Dysnomia; highly eccentric distant orbit; no known rings',esi:.07,water:'Water ice may exist internally; no known liquid reservoir',biosignatures:'None detected' },
+  moon: { name:'Moon (Luna)',kind:'moon',parent:'Earth',diameterKm:3475,massKg:7.342e22,gravityMps2:1.62,gravityG:.165,escapeKmS:2.38,densityGcm3:3.34,semiMajorAxisAU:1,orbitalPeriod:'27.32 days around Earth',orbitalSpeedKmS:1.02,dayLength:'27.32 days sidereal; synchronous',axialTiltDeg:6.68,spin:'prograde',atmosphere:'Extremely tenuous exosphere: He, Ne, Ar, Na, K and traces of other species',pressureBar:1e-15,temperatureC:[-173,-23,127],interior:'Small iron-rich core, partially molten deep mantle, anorthositic crust',system:'Earth’s only natural satellite; synchronous rotation and large impact basins',esi:.56,water:'Polar cold-trap ice; no stable exposed liquid water',biosignatures:'None detected' },
+  europa: { name:'Europa',kind:'moon',parent:'Jupiter',diameterKm:3122,massKg:4.80e22,gravityMps2:1.315,gravityG:.134,escapeKmS:2.03,densityGcm3:3.01,semiMajorAxisAU:5.204,orbitalPeriod:'3.551 days around Jupiter',orbitalSpeedKmS:13.74,dayLength:'3.551 days synchronous',axialTiltDeg:.1,spin:'prograde',atmosphere:'Very thin O₂ exosphere; pressure near vacuum',pressureBar:1e-12,temperatureC:[-220,-160,-140],interior:'Iron-rich core, rocky mantle, global salty ocean, water-ice shell',system:'Galilean moon in Laplace resonance; young fractured ice surface; weak induced magnetic field',esi:.47,water:'Strong evidence for a global subsurface saltwater ocean',biosignatures:'No life or biosignature confirmed; ocean is a major exploration target' },
+  titan: { name:'Titan',kind:'moon',parent:'Saturn',diameterKm:5150,massKg:1.345e23,gravityMps2:1.352,gravityG:.138,escapeKmS:2.64,densityGcm3:1.88,semiMajorAxisAU:9.583,orbitalPeriod:'15.95 days around Saturn',orbitalSpeedKmS:5.57,dayLength:'15.95 days synchronous',axialTiltDeg:.3,spin:'prograde',atmosphere:'~98.4% N₂, ~1.4% CH₄, trace H₂ and hydrocarbons',pressureBar:1.47,temperatureC:[-183,-179,-176],interior:'Rocky core, possible water-ammonia ocean, high-pressure ice and outer ice shell',system:'Saturn’s largest moon; methane/ethane lakes, rivers, dunes and thick photochemical haze',esi:.64,water:'Subsurface water-ammonia ocean possible; surface liquids are methane and ethane',biosignatures:'No biosignatures detected; complex prebiotic chemistry is present' },
+  enceladus: { name:'Enceladus',kind:'moon',parent:'Saturn',diameterKm:504,massKg:1.080e20,gravityMps2:.113,gravityG:.0115,escapeKmS:.239,densityGcm3:1.61,semiMajorAxisAU:9.583,orbitalPeriod:'1.370 days around Saturn',orbitalSpeedKmS:12.6,dayLength:'1.370 days synchronous',axialTiltDeg:0,spin:'prograde',atmosphere:'Water-vapor-rich plume-fed exosphere; extremely low pressure',pressureBar:1e-10,temperatureC:[-240,-201,-128],interior:'Rocky core beneath global salty ocean and water-ice shell',system:'Bright icy surface; south-polar tiger-stripe fissures emit water, salts, silica and organics',esi:.45,water:'Confirmed global subsurface ocean with hydrothermal activity indicators',biosignatures:'No confirmed biosignature; plume chemistry provides testable habitability clues' },
+  ganymede: { name:'Ganymede',kind:'moon',parent:'Jupiter',diameterKm:5268,massKg:1.482e23,gravityMps2:1.428,gravityG:.146,escapeKmS:2.74,densityGcm3:1.94,semiMajorAxisAU:5.204,orbitalPeriod:'7.155 days around Jupiter',orbitalSpeedKmS:10.88,dayLength:'7.155 days synchronous',axialTiltDeg:.33,spin:'prograde',atmosphere:'Very tenuous O₂ exosphere; near vacuum',pressureBar:1e-12,temperatureC:[-203,-163,-121],interior:'Differentiated iron-rich core, rocky mantle and layered ice with possible deep ocean',system:'Largest moon in Solar System; only moon with intrinsic magnetic field; Laplace resonance',esi:.42,water:'Large water-ice inventory; likely buried ocean between ice layers',biosignatures:'None detected' },
+  io: { name:'Io',kind:'moon',parent:'Jupiter',diameterKm:3643,massKg:8.932e22,gravityMps2:1.796,gravityG:.183,escapeKmS:2.56,densityGcm3:3.53,semiMajorAxisAU:5.204,orbitalPeriod:'1.769 days around Jupiter',orbitalSpeedKmS:17.33,dayLength:'1.769 days synchronous',axialTiltDeg:0,spin:'prograde',atmosphere:'Thin SO₂ atmosphere, variable with volcanic activity',pressureBar:1e-8,temperatureC:[-160,-130,1600],interior:'Iron or iron-sulfide core, silicate mantle, extensive tidal magma activity',system:'Most volcanically active known world; strong tidal heating in Laplace resonance',esi:.35,water:'Little accessible water ice; no known ocean',biosignatures:'No evidence; harsh volcanic environment' },
+  callisto: { name:'Callisto',kind:'moon',parent:'Jupiter',diameterKm:4821,massKg:1.076e23,gravityMps2:1.236,gravityG:.126,escapeKmS:2.44,densityGcm3:1.83,semiMajorAxisAU:5.204,orbitalPeriod:'16.69 days around Jupiter',orbitalSpeedKmS:8.20,dayLength:'16.69 days synchronous',axialTiltDeg:0,spin:'prograde',atmosphere:'Very tenuous CO₂ and O₂ exosphere',pressureBar:1e-12,temperatureC:[-193,-139,-108],interior:'Rock-ice mixture, possibly partially differentiated; induced-field evidence for salty ocean',system:'Heavily cratered outer Galilean moon; comparatively low radiation environment',esi:.41,water:'Subsurface salty ocean is possible; abundant surface ice',biosignatures:'None detected' },
+  phobos: { name:'Phobos',kind:'moon',parent:'Mars',diameterKm:22.4,massKg:1.066e16,gravityMps2:.0057,gravityG:.00058,escapeKmS:.011,densityGcm3:1.876,semiMajorAxisAU:1.524,orbitalPeriod:'7 h 39 min around Mars',orbitalSpeedKmS:2.14,dayLength:'7 h 39 min synchronous',axialTiltDeg:0,spin:'prograde',atmosphere:'None; vacuum',pressureBar:0,temperatureC:[-112,-40,25],interior:'Porous, irregular, carbonaceous-looking body; internal structure uncertain',system:'Inner Martian moon; orbit is decaying and may form a ring or impact Mars',esi:null,water:'Possible hydrated minerals; no stable liquid water',biosignatures:'None detected' },
+  deimos: { name:'Deimos',kind:'moon',parent:'Mars',diameterKm:12.4,massKg:1.476e15,gravityMps2:.003,gravityG:.00031,escapeKmS:.0056,densityGcm3:1.47,semiMajorAxisAU:1.524,orbitalPeriod:'30 h 18 min around Mars',orbitalSpeedKmS:1.35,dayLength:'30 h 18 min synchronous',axialTiltDeg:0,spin:'prograde',atmosphere:'None; vacuum',pressureBar:0,temperatureC:[-113,-40,27],interior:'Small porous, irregular body; composition and origin uncertain',system:'Outer Martian moon; tidally locked; no rings',esi:null,water:'Possible hydrated minerals; no liquid water',biosignatures:'None detected' },
+};
 
 const FACTS: Record<string, string> = {
   sun: 'The Sun is a G2V star made mainly of hydrogen (~73% by mass) and helium (~25%), with a ~5,778 K photosphere. Its core fuses hydrogen into helium; the solar wind and magnetic activity shape the heliosphere.',
@@ -29,70 +63,127 @@ const FACTS: Record<string, string> = {
   enceladus: 'Enceladus has a tiny water-vapour-rich plume-fed exosphere and no substantial surface atmosphere. A global subsurface saltwater ocean vents through the south-polar tiger stripes; plume material includes water, salts, silica and organic compounds, with evidence for hydrothermal activity. This makes it a leading astrobiology target, but no biosignature or life has been confirmed. Gravity is ~0.11 m/s² and escape speed ~0.24 km/s.',
 };
 
-const FOLLOWUPS: Record<string, string[]> = {
-  general: ['How far is Mars right now?', 'Could life exist on Europa?', 'Compare Earth and Venus'],
-  habitability: ['What makes Europa habitable?', 'What is the Earth Similarity Index?', 'Could Enceladus support life?'],
-  atmosphere: ['Which planet has the strongest winds?', 'Why is Venus so hot?', 'Compare Earth and Mars'],
-};
-
 export function liveDistance(target: string, now = new Date()) {
+  if (target === 'moon') {
+    const km = 384_400;
+    return { km, au: km / AU_KM, lightMinutes: km / C_KM_S / 60 };
+  }
   const jdTT = jdUTtoTT(dateToJD(now));
   const earth = planetPosition('earth', jdTT);
+  const ephemerisTarget = HOSTS[target] ?? target;
   const other = target === 'sun'
     ? { x: 0, y: 0, z: 0 }
-    : target === 'moon'
-      ? (() => { const m = planetPosition('earth', jdTT); return { x: m.x, y: m.y, z: m.z }; })()
-      : planetPosition(target, jdTT);
+    : planetPosition(ephemerisTarget, jdTT);
   const km = Math.hypot(earth.x - other.x, earth.y - other.y, earth.z - other.z);
   return { km, au: km / AU_KM, lightMinutes: km / C_KM_S / 60 };
 }
 
-function detectBody(question: string) {
-  const q = question.toLowerCase();
-  const aliases: Record<string, string[]> = { sun: ['sun', 'solar'], moon: ['moon', 'luna'], earth: ['earth'], jupiter: ['jupiter'], saturn: ['saturn'], mercury: ['mercury'], venus: ['venus'], mars: ['mars'], uranus: ['uranus'], neptune: ['neptune'], europa: ['europa'], titan: ['titan'], enceladus: ['enceladus'] };
-  return Object.entries(aliases).find(([, words]) => words.some((word) => new RegExp(`\\b${word}\\b`, 'i').test(q)))?.[0];
+const BODY_ALIASES: Record<string, string[]> = {
+  sun:['sun','sol'], mercury:['mercury','mercury planet','murcury'], venus:['venus'], earth:['earth','terra'], mars:['mars'], jupiter:['jupiter','jupitor'], saturn:['saturn'], uranus:['uranus'], neptune:['neptune','neptun'],
+  pluto:['pluto'], ceres:['ceres'], eris:['eris'], moon:['moon','luna','earth moon'], europa:['europa'], titan:['titan'], enceladus:['enceladus'], ganymede:['ganymede'], io:['io'], callisto:['callisto'], phobos:['phobos'], deimos:['deimos'],
+};
+const FOLLOWUPS = {
+  general:['How far away is it right now?','What is its atmosphere like?','Could it support life?','Compare it with Earth.'],
+  habitability:['Could liquid water exist there?','What biosignatures would we look for?','Compare Europa and Enceladus.','What does the ESI measure?'],
+  telemetry:['What is the one-way light delay?','What am I looking at right now?','What is the simulation time?','Is it visible from my observer location?'],
+  project:['How are live planet positions calculated?','What does the Astrobiology Lab predict?','Explain the vis-viva equation.','How does the voice guide work?'],
+};
+const HOSTS: Record<string,string> = { europa:'jupiter',ganymede:'jupiter',io:'jupiter',callisto:'jupiter',titan:'saturn',enceladus:'saturn',phobos:'mars',deimos:'mars',moon:'earth' };
+
+function editDistance(a: string,b: string): number {
+  const row=Array.from({length:b.length+1},(_,i)=>i);
+  for(let i=1;i<=a.length;i++){let prev=row[0];row[0]=i;for(let j=1;j<=b.length;j++){const old=row[j];row[j]=Math.min(row[j]+1,row[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));prev=old;}}
+  return row[b.length];
+}
+function detectBody(text: string): string | undefined {
+  const normalized=text.toLowerCase().replace(/[^a-z0-9\s-]/g,' ').replace(/\s+/g,' ').trim();
+  for(const [id,aliases] of Object.entries(BODY_ALIASES)) if(aliases.some(alias=>new RegExp(`\\b${alias}\\b`,'i').test(normalized))) return id;
+  const words=normalized.split(' ');
+  for(const word of words){ if(word.length<4) continue; for(const [id,aliases] of Object.entries(BODY_ALIASES)){const alias=aliases[0];if(Math.abs(alias.length-word.length)<=1&&editDistance(alias,word)<=1)return id;} }
+  return undefined;
+}
+function liveContext(): any {
+  try { return typeof window!=='undefined' ? (window as any).__planetAssistantContext?.() ?? {} : {}; } catch { return {}; }
+}
+function followups(items: string[]) { return items.slice(0,4); }
+function profileReply(id:string): string {
+  const p=CELESTIAL_KNOWLEDGE[id];
+  const [tMin,tMean,tMax]=p.temperatureC;
+  const tempK=(v:number)=>(v+273.15).toFixed(0);
+  const pressure=p.pressureBar===0?'near vacuum':`${p.pressureBar<.001?p.pressureBar.toExponential(1):p.pressureBar} bar (${(p.pressureBar/1.01325).toPrecision(3)} atmospheres)`;
+  const esi=p.esi===null?'not meaningful for this body':`${p.esi.toFixed(2)} (model-dependent)`;
+  return `${p.name} is a ${p.kind}${p.parent?` orbiting ${p.parent}`:''}. It is ${p.diameterKm.toLocaleString()} km across, has a mass of ${p.massKg.toExponential(3)} kg, gravity of ${p.gravityMps2} meters per second squared (${p.gravityG} Earth g), escape speed ${p.escapeKmS} kilometers per second, and mean density ${p.densityGcm3} grams per cubic centimeter. Its orbit is ${p.semiMajorAxisAU} AU from the Sun with a period of ${p.orbitalPeriod}; orbital speed is about ${p.orbitalSpeedKmS} kilometers per second. Its day is ${p.dayLength}, axial tilt ${p.axialTiltDeg===null?'not well determined':`${p.axialTiltDeg} degrees`}, and spin is ${p.spin}. Atmosphere: ${p.atmosphere}; pressure ${pressure}. Representative temperature minimum, mean and maximum are ${tMin}, ${tMean} and ${tMax} degrees Celsius, or ${tempK(tMin)}, ${tempK(tMean)} and ${tempK(tMax)} kelvin${p.temperatureContext?`, measured at ${p.temperatureContext}`:''}. Interior: ${p.interior}. System highlights: ${p.system}. Water potential: ${p.water} ESI is ${esi}. Biosignatures: ${p.biosignatures}.`;
+}
+function comparisonReply(a:string,b:string):string {
+  const x=CELESTIAL_KNOWLEDGE[a],y=CELESTIAL_KNOWLEDGE[b];
+  return `${x.name} versus ${y.name}: diameters ${x.diameterKm.toLocaleString()} and ${y.diameterKm.toLocaleString()} km; surface or cloud-top gravity ${x.gravityMps2} and ${y.gravityMps2} meters per second squared; mean density ${x.densityGcm3} and ${y.densityGcm3} grams per cubic centimeter. Their years are ${x.orbitalPeriod} and ${y.orbitalPeriod}. ${x.name} has ${x.atmosphere.toLowerCase()}; ${y.name} has ${y.atmosphere.toLowerCase()}. Water and habitability: ${x.water} ${y.name}: ${y.water} Neither environment has confirmed extraterrestrial life.`;
+}
+function currentTelemetry(target:string,ctx:any):string {
+  let d:ReturnType<typeof liveDistance>;
+  try { d=liveDistance(target,ctx.date instanceof Date?ctx.date:new Date()); }
+  catch { return `A live Earth range for ${CELESTIAL_KNOWLEDGE[target]?.name??target} is not available because this body's orbit is not included in the active planetary ephemeris. Its catalog mean distance from the Sun is ${CELESTIAL_KNOWLEDGE[target]?.semiMajorAxisAU??'unknown'} AU.`; }
+  return `At simulation time ${ctx.simulationTime??new Date().toISOString()}, Earth–${CELESTIAL_KNOWLEDGE[target].name} center distance is ${d.au.toFixed(4)} AU, or ${d.km.toLocaleString('en-US',{maximumFractionDigits:0})} kilometers. One-way light time is ${d.lightMinutes.toFixed(2)} minutes. The simulation time-warp rate is ${ctx.timeWarp??1} times real time${ctx.paused?' and the simulation is paused':''}.`;
 }
 
 export function answerPlanetQuestion(question: string): PlanetAssistantAnswer {
-  const q = question.trim().toLowerCase();
-  const target = detectBody(q);
-  const compare = q.match(/compare\s+([a-z]+)\s+(?:and|vs\.?|versus)\s+([a-z]+)/i);
-  if (compare) {
-    const a = detectBody(compare[1]); const b = detectBody(compare[2]);
-    if (a && b) return { reply: `${NAMES[a]}: ${FACTS[a]}\n\n${NAMES[b]}: ${FACTS[b]}`, targetPlanet: a, followUps: [`How does ${NAMES[a]}'s gravity compare?`, `Could life exist on ${NAMES[b]}?`] };
+  const q=question.trim().toLowerCase(); const ctx=liveContext();
+  const target=detectBody(q);
+  const focused=ctx.focusedBody&&CELESTIAL_KNOWLEDGE[ctx.focusedBody]?ctx.focusedBody:undefined;
+  const activeTarget=target??focused;
+  const compare=q.match(/(?:compare|difference between)\s+([a-z-]+)\s+(?:and|vs\.?|versus)\s+([a-z-]+)/i);
+  if(compare){const a=detectBody(compare[1]),b=detectBody(compare[2]);if(a&&b)return {reply:comparisonReply(a,b),targetPlanet:a,followUps:followups([`How do their atmospheres compare?`,`Which has stronger gravity, ${CELESTIAL_KNOWLEDGE[a].name} or ${CELESTIAL_KNOWLEDGE[b].name}?`,`Could life exist on ${CELESTIAL_KNOWLEDGE[b].name}?`])};}
+  if(/what am i looking at|current planet|current target|where am i|what is this world/.test(q)){
+    if(focused)return {reply:`The camera is focused on ${CELESTIAL_KNOWLEDGE[focused].name}. ${profileReply(focused)} ${currentTelemetry(focused,ctx)}`,targetPlanet:focused,followUps:followups(FOLLOWUPS.telemetry)};
+    if(ctx.focusedBody)return {reply:`The camera is focused on ${ctx.focusedName??ctx.focusedBody}. ${ctx.focusedDescription??'This selected object is registered in the live scene, but it is outside the guide’s detailed reference catalog.'} Simulation time is ${ctx.simulationTime??'unavailable'} at ${ctx.timeWarp??1} times real time.`,targetPlanet:ctx.focusedBody,followUps:followups(FOLLOWUPS.telemetry)};
   }
-  if (/hottest|hotter|temperature extreme/.test(q)) return { reply: 'Venus is the hottest planet by average surface temperature (~465°C), even though Mercury is closer to the Sun. Venus’s dense CO₂ atmosphere traps heat through an intense greenhouse effect.', targetPlanet: 'venus', followUps: FOLLOWUPS.atmosphere };
-  if (/strongest gravity|most gravity|highest gravity/.test(q)) return { reply: 'Jupiter has the strongest cloud-top gravity among the planets, about 24.8 m/s² (2.53 Earth g). The Sun’s surface gravity is much stronger overall, around 274 m/s².', targetPlanet: 'jupiter', followUps: FOLLOWUPS.general };
-  if (/most moons|which planet.*moons|planet.*most.*moon/.test(q)) return { reply: 'The known moon counts can change as small satellites are discovered and confirmed. Saturn currently has the largest confirmed family; Jupiter is also exceptionally rich in moons. Ask about Saturn or Jupiter for their environments and major satellites.', targetPlanet: 'saturn', followUps: ['What is Saturn like?', 'Tell me about Europa', 'Compare Jupiter and Saturn'] };
-  if (/esi|earth similarity|similarity index/.test(q)) return { reply: 'The Earth Similarity Index (ESI) is a 0–1 comparison of selected properties such as radius, density, escape velocity and surface temperature. It measures resemblance, not life or habitability: a high score does not establish liquid water, a suitable atmosphere, or biosignatures.', ...(target ? { targetPlanet: target } : {}), followUps: FOLLOWUPS.habitability };
-  if (/life|habit|biosignature|water|ocean/.test(q)) {
-    const body = target ?? (q.includes('life') ? 'europa' : undefined);
-    const detail = body ? `${NAMES[body]}: ${FACTS[body]}` : 'Liquid water is stable at a world’s surface only when temperature and pressure allow it; it can also persist below ice, where tidal or internal heat supplies energy. Europa and Enceladus likely have subsurface oceans, while Titan may have a deep water-ammonia ocean. Organic chemistry or water alone is not evidence of life; no extraterrestrial biosignature has been confirmed.';
-    return { reply: detail + (body ? '\n\nHabitability is plausible in some environments, but there is no confirmed evidence of life.' : ''), ...(body ? { targetPlanet: body } : {}), followUps: FOLLOWUPS.habitability };
+  if(/simulation time|what time is it|time warp|warp rate|simulation date/.test(q)) return {reply:`The simulated date is ${ctx.simulationTime??new Date().toISOString()}. Time is advancing at ${ctx.timeWarp??1} times real time${ctx.paused?' and is paused':''}. The ephemeris positions follow the simulation clock, while live distance questions use that same timestamp.`,targetPlanet:focused,followUps:followups(FOLLOWUPS.telemetry)};
+  if(/astrobiology lab|slider|habitability model|life.support probability|lab value/.test(q)){
+    const lab=ctx.astrobiologyLab;
+    if(lab)return {reply:`The Astrobiology Lab is set to ${lab.planet}, at ${lab.orbitalAU} AU, pressure ${lab.pressureAtm} atmospheres, carbon dioxide ${lab.co2Pct} percent, and oxygen ${lab.oxygenPct} percent. Its local educational model estimates ${lab.temperatureK} kelvin, ESI ${lab.esi}, and life-support probability ${lab.probability}. This deterministic client-side model is illustrative, not a validated life detector.`,targetPlanet:lab.planetId,followUps:followups(FOLLOWUPS.habitability)};
+    return {reply:'The Astrobiology Lab controls are not available until the scene finishes initializing.',targetPlanet:focused,followUps:followups(FOLLOWUPS.habitability)};
   }
-  if (/distance|light.?travel|light delay|how far|telemetry/.test(q) && target) {
-    if (target === 'moon' || target === 'europa' || target === 'titan' || target === 'enceladus') {
-      return { reply: `${NAMES[target]} is a natural satellite, so this planetary ephemeris view reports its host’s Earth distance, not a moon-resolved spacecraft range.`, targetPlanet: target, followUps: FOLLOWUPS.general };
-    }
-    const d = liveDistance(target);
-    return { reply: `Live Earth–${NAMES[target]} center-to-center distance: ${d.au.toFixed(4)} AU (${d.km.toLocaleString('en-US', { maximumFractionDigits: 0 })} km). One-way light travel time is about ${d.lightMinutes.toFixed(2)} minutes (t = d/c).`, targetPlanet: target, followUps: ['How does light delay affect communication?', `Tell me about ${NAMES[target]} gravity`] };
+  if(/observer|my location|my sky|visible in space|visible.*sky|sky tonight|above horizon/.test(q)){
+    const obs=ctx.observer;
+    if(/visible in space|am i visible/.test(q)) return {reply:obs?.pinned?`Your observer is pinned at latitude ${obs.latitude} degrees and longitude ${obs.longitude} degrees on Earth. The app can test whether a selected planet is above that location’s geometric horizon; it does not model whether a person or marker is optically visible from space.`:'No Earth Observer location is pinned yet, so the app has no observer coordinates for a visibility estimate.',targetPlanet:'earth',followUps:followups(FOLLOWUPS.telemetry)};
+    if(obs?.pinned)return {reply:`The pinned Earth Observer is at latitude ${obs.latitude} degrees, longitude ${obs.longitude} degrees. For ${CELESTIAL_KNOWLEDGE[target]?.name??obs.targetName??'the selected sky target'}, the live sky readout says ${obs.skyStatus??'sky status unavailable'}${obs.altitude?`, altitude ${obs.altitude}`:''}. This is the current simulation instant, not a full-night forecast; terrain and atmospheric refraction are not included.`,targetPlanet:target??obs.targetPlanet??focused,followUps:followups(FOLLOWUPS.telemetry)};
+    return {reply:'There is no pinned Earth Observer location yet. Set one in My Live Location to calculate whether a planet is above your local geometric horizon.',targetPlanet:focused,followUps:followups(FOLLOWUPS.telemetry)};
   }
-  if (/clock|relativ|time dilation|drift/.test(q) && target) {
-    const jdTT = jdUTtoTT(dateToJD(new Date()));
-    const earthPos = planetPosition('earth', jdTT);
-    const planetPos = target === 'sun' ? { x: 0, y: 0, z: 0 } : planetPosition(target, jdTT);
-    const earthR = Math.hypot(earthPos.x, earthPos.y, earthPos.z);
-    const targetR = target === 'sun' ? 695700 : Math.hypot(planetPos.x, planetPos.y, planetPos.z);
-    const earthPotential = 1.32712440018e11 / earthR + PLANET_GM_KM3_S2.earth / PLANET_RADIUS_KM.earth;
-    const targetPotential = target === 'sun'
-      ? 1.32712440018e11 / 695700
-      : 1.32712440018e11 / targetR + PLANET_GM_KM3_S2[target] / PLANET_RADIUS_KM[target];
-    const drift = Math.abs(targetPotential - earthPotential) / (C_KM_S * C_KM_S) * 86400 * 1e6;
-    return { reply: `A rough gravitational clock-rate comparison for ${NAMES[target]}’s reference surface versus Earth’s surface is about ${drift.toFixed(2)} μs/day at this epoch. This simplified estimate includes the Sun’s potential and the two planets’ surface potentials; it omits rotation, altitude, other bodies, and relativistic coordinate conventions. Spacecraft clock corrections require a full mission model.`, targetPlanet: target, followUps: FOLLOWUPS.general };
+  if(/project|how does this app|technology|tech stack|digital twin|architecture|webgl|shader|mlp|voice guide|spatial audio/.test(q)) return {reply:'Solar Wanderer is a browser-side 1:1 Solar System digital twin and observatory. The core is native JavaScript ES modules with TypeScript science modules, Three.js on WebGL2, custom GLSL planet and atmosphere shaders, Keplerian models plus VSOP/JPL sampled ephemerides, and a floating-origin renderer. The Astrobiology Lab runs a deterministic client-side MLP-style habitability predictor. Spatial audio uses Web Audio synthesis, and the Planetary Guide uses the browser’s native Web Speech voices. The guide’s knowledge engine is local and rule-based; it does not send questions to a remote AI service.',targetPlanet:focused,followUps:followups(FOLLOWUPS.project)};
+  if(/vis-viva|orbital velocity|vis viva/.test(q)) return {reply:'The vis-viva equation gives orbital speed at distance r: v² = μ(2/r − 1/a), where μ is the central body’s gravitational parameter and a is the orbit’s semi-major axis. It follows from conservation of orbital energy and works for circular and elliptical two-body orbits; perturbations require a richer model.',targetPlanet:activeTarget,followUps:followups(['What is escape velocity?','How does orbital eccentricity work?','How does this app calculate planet positions?'])};
+  if(/stefan|boltzmann|radiative equilibrium|equilibrium temperature/.test(q)) return {reply:'For a simple airless planet with uniform reradiation, absorbed sunlight balances thermal emission: T = [S(1 − A)/(4σ)]^(1/4), where S is stellar flux, A is Bond albedo, and σ is the Stefan–Boltzmann constant. Greenhouse atmospheres, clouds, rotation, internal heat and uneven day-night heating change the actual surface temperature.',targetPlanet:activeTarget,followUps:followups(['Why is Venus hotter than Mercury?','What is albedo?','How does greenhouse warming work?'])};
+  if(/special relativity|general relativity|relativistic|time dilation|clock drift/.test(q)) return {reply:'Special-relativistic time dilation makes a moving clock run slower by approximately v²/(2c²) for speeds much less than light speed. General relativity adds gravitational redshift: a clock deeper in a gravitational potential runs slower relative to a distant clock, approximately Δτ/τ ≈ ΔΦ/c². The app can provide simplified μs-per-day estimates, not mission-grade relativistic navigation corrections.',targetPlanet:activeTarget,followUps:followups(['Estimate clock drift near Jupiter','What is the light delay to Mars?','Explain orbital velocity'])};
+  if(/earth similarity|\besi\b|similarity index/.test(q)) return {reply:'The Earth Similarity Index is a 0-to-1 heuristic comparing selected physical properties, commonly radius, density, escape velocity and temperature. One means Earth-like under the chosen formula. It is not a probability of life and omits many decisive factors such as radiation, chemistry, geology, climate stability and accessible liquid water.',targetPlanet:activeTarget,followUps:followups(FOLLOWUPS.habitability)};
+  if(/hottest|coldest|largest|biggest|smallest|fastest spin|fastest rotation|densest|strongest gravity|most moons|fastest orbit/.test(q)){
+    const kind=/moon|satellite/.test(q)?'moon':/dwarf/.test(q)?'dwarf planet':'planet';
+    const set=Object.entries(CELESTIAL_KNOWLEDGE).filter(([,p])=>p.kind===kind);
+    let key='jupiter',label='largest';
+    if(/hottest/.test(q)){key='venus';label='hottest average surface';}
+    else if(/coldest/.test(q)){key='uranus';label='coldest measured cloud-top minimum';}
+    else if(/smallest/.test(q)){key='mercury';label='smallest';}
+    else if(/fastest spin|fastest rotation/.test(q)){key='jupiter';label='fastest rotating';}
+    else if(/densest/.test(q)){key='earth';label='densest';}
+    else if(/strongest gravity/.test(q)){key='jupiter';label='strongest planetary cloud-top gravity';}
+    else if(/fastest orbit/.test(q)){key='mercury';label='fastest orbital speed';}
+    else if(/most moons/.test(q)){key='saturn';label='planet with the most currently confirmed moons (293 as of August 2026); counts change with discoveries';}
+    else if(set.length) key=set.reduce((best,[id,p])=>/smallest/.test(q)?(p.diameterKm<CELESTIAL_KNOWLEDGE[best].diameterKm?id:best):(p.diameterKm>CELESTIAL_KNOWLEDGE[best].diameterKm?id:best),set[0][0]);
+    return {reply:`Among the eight planets, ${CELESTIAL_KNOWLEDGE[key].name} is the ${label}. ${profileReply(key)}`,targetPlanet:key,followUps:followups([`Compare ${CELESTIAL_KNOWLEDGE[key].name} and Earth.`,`How does ${CELESTIAL_KNOWLEDGE[key].name} get that extreme?`,'Which world has the strongest winds?','How many moons does it have?'])};
   }
-  if (target) {
-    const category = /atmos|weather|storm|wind|pressure|gas|greenhouse/.test(q) ? 'Atmosphere & weather' : /gravity|orbit|escape|core|tilt|year|structure/.test(q) ? 'Gravity, orbit & structure' : 'Planetary profile';
-    return { reply: `${category} — ${FACTS[target]}`, targetPlanet: target, followUps: /atmos|weather|storm|wind|pressure|gas|greenhouse/.test(q) ? FOLLOWUPS.atmosphere : FOLLOWUPS.general };
+  if(/distance|light.?travel|light delay|how far|telemetry/.test(q)){
+    const body=activeTarget??focused;
+    if(body&&CELESTIAL_KNOWLEDGE[body]){const host=HOSTS[body];const telemetry=currentTelemetry(host??body,ctx);return {reply:host?`${CELESTIAL_KNOWLEDGE[body].name} orbits ${CELESTIAL_KNOWLEDGE[host].name}; ${telemetry} This uses the host planet position, not a moon-resolved ephemeris.`:telemetry,targetPlanet:body,followUps:followups(FOLLOWUPS.telemetry)};}
+    return {reply:'Name a planet or moon and I can report its current Earth distance and one-way light time from the live simulation ephemeris.',targetPlanet:focused,followUps:followups(FOLLOWUPS.telemetry)};
   }
-  return { reply: 'I can help with planetary atmospheres, weather, gravity, orbital structure, live Earth-to-planet distance and light delay, relativistic clock-rate estimates, or astrobiology. Try naming a world, such as “Live Mars distance?” or “Could life exist on Europa?”', followUps: FOLLOWUPS.general };
+  if(/life|habit|biosignature|water|ocean|esi/.test(q)){
+    const body=activeTarget;
+    if(body){const p=CELESTIAL_KNOWLEDGE[body];return {reply:`${p.name}: ${p.water} Earth Similarity Index: ${p.esi===null?'not meaningful':p.esi.toFixed(2)+' (model-dependent)'}. Biosignature status: ${p.biosignatures}. A potentially habitable environment does not mean life has been found.`,targetPlanet:body,followUps:followups(FOLLOWUPS.habitability)};}
+    return {reply:'Liquid water can persist on the surface only where pressure and temperature permit it, or below ice when internal or tidal heat is available. Europa, Ganymede and Enceladus are leading subsurface-ocean targets; Titan has a possible deep water-ammonia ocean and surface methane lakes. No extraterrestrial life or biosignature has been confirmed.',targetPlanet:'europa',followUps:followups(FOLLOWUPS.habitability)};
+  }
+  if(activeTarget&&CELESTIAL_KNOWLEDGE[activeTarget]){
+    const p=CELESTIAL_KNOWLEDGE[activeTarget];
+    if(/atmosphere|weather|storm|wind|pressure|gas|greenhouse/.test(q))return {reply:`${p.name} atmosphere and climate: ${p.atmosphere}. Reference pressure is ${p.pressureBar} bar; representative temperatures span ${p.temperatureC[0]} to ${p.temperatureC[2]} degrees Celsius. ${p.temperatureContext??''} ${p.system}`,targetPlanet:activeTarget,followUps:followups(['How strong is its gravity?','What is its interior made of?','Could it support life?','What is its current distance from Earth?'])};
+    if(/gravity|orbit|escape|core|tilt|year|structure|diameter|mass|density|day|spin/.test(q))return {reply:profileReply(activeTarget),targetPlanet:activeTarget,followUps:followups(FOLLOWUPS.general)};
+    return {reply:profileReply(activeTarget),targetPlanet:activeTarget,followUps:followups(FOLLOWUPS.general)};
+  }
+  if(focused)return {reply:`I can make a useful start from the current focus, ${CELESTIAL_KNOWLEDGE[focused].name}. ${profileReply(focused)} You can ask about its current telemetry, orbit, atmosphere, interior, habitability, or compare it with another body.`,targetPlanet:focused,followUps:followups(FOLLOWUPS.general)};
+  return {reply:'I can help with Solar System worlds, live telemetry, observatory state, habitability, orbital physics, and how this digital twin works. Try “What am I looking at?”, “How far is Mars right now?”, “Explain vis-viva”, or “Compare Europa and Enceladus.”',targetPlanet:'earth',followUps:followups(FOLLOWUPS.project)};
 }

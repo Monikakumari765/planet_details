@@ -76,7 +76,7 @@ export function mountPlanetAssistant(flyTo) {
     root.querySelector('.planet-guide-followups')?.remove();
     const followups = document.createElement('div');
     followups.className = 'planet-guide-followups';
-    for (const prompt of answer.followUps.slice(0, 3)) {
+    for (const prompt of answer.followUps.slice(0, 4)) {
       const chip = document.createElement('button');
       chip.type = 'button'; chip.className = 'planet-guide-chip'; chip.textContent = prompt;
       chip.addEventListener('click', () => ask(prompt));
